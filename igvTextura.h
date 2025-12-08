@@ -16,27 +16,29 @@
 /**
  * Los objetos de esta clase representan texturas OpenGL
  */
-class igvTextura
-{  private:
-      // Atributos
-      unsigned int idTextura = 0; ///< Identificador de la textura OpenGL
-      unsigned int alto = 0  ///< Alto de la textura
-                   , ancho = 0; ///< Ancho de la textura
+class igvTextura {
+private:
+    unsigned int idTextura = 0;
+    unsigned int alto = 0, ancho = 0;
 
-      // Métodos
+    GLenum filtroMag = GL_LINEAR;
+    GLenum filtroMin = GL_LINEAR;
 
-   public:
-      // Constructores por defecto y destructor
-      /// Constructor por defecto
-      igvTextura () = default;
-      igvTextura ( std::string fichero ); // Textura cargada desde un fichero
-      ~igvTextura ();
+public:
+    igvTextura () = default;
+    igvTextura ( std::string fichero );
+    ~igvTextura ();
 
-      // Métodos
-      void aplicar (); //Establece la textura como la activa
-      void setIdTextura ( unsigned int id );
+    void aplicar ();
+    void desactivar();
 
-      unsigned int getIdTextura ();
+    void setIdTextura ( unsigned int id );
+    unsigned int getIdTextura ();
+
+    void setFiltroMag(GLenum filtro);
+    void setFiltroMin(GLenum filtro);
+
+    static igvTextura* crearTableroAjedrez(int tamano, int numCuadros);
 };
 
 #endif   // __IGVTEXTURA

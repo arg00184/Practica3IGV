@@ -11,29 +11,19 @@
  * Constructor parametrizado. Carga una textura de archivo
  * @param fichero
  */
-igvTextura::igvTextura ( std::string fichero )
-{  glEnable ( GL_TEXTURE_2D );
-
-    if ( !glIsTexture ( idTextura ) )
-    {  std::vector<unsigned char> texeles;
-        unsigned int error = lodepng::decode ( texeles, ancho, alto, fichero );
-
-        if ( error )
-        {  std::string mensaje = "Error leyendo el archivo ";
-            throw std::runtime_error ( mensaje + fichero );
+igvTextura::igvTextura(std::string fichero) {
+    glEnable(GL_TEXTURE_2D);
+    if (!glIsTexture(idTextura)) {
+        std::vector<unsigned char> texeles;
+        unsigned int error = lodepng::decode(texeles, ancho, alto, fichero);
+        if (error) {
+            throw std::runtime_error("Error leyendo archivo " + fichero);
         }
-    std::cout<<ancho<<" "<<alto<<std::endl;
-        // TODO: Apartado F: Añadir aquí el código para cargar como textura OpenGL la imagen */
-        //	- Generar el identificador de textura y asignarlo al atributo idTextura (glGenTextures)
-        glGenTextures(1,&idTextura);
-        //	- Enlazar el identificador creado a GL_TEXTURE_2D (glBindTexture)
-        glBindTexture(GL_TEXTURE_2D,idTextura);
-        //  - Especificar la textura, asignádole como textura el array imagen (glTexImage2D)
-        glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,ancho,alto,0,GL_RGBA,GL_UNSIGNED_BYTE,texeles.data());
-        //  - Modo de aplicación de la textura
+        glGenTextures(1, &idTextura);
+        glBindTexture(GL_TEXTURE_2D, idTextura);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ancho, alto, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, texeles.data());
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-        //	- Parámetros de la textura: repetición y filtros
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -71,4 +61,55 @@ void igvTextura::setIdTextura ( unsigned int id )
  */
 unsigned int igvTextura::getIdTextura ()
 {  return this->idTextura;
+}
+
+void igvTextura::desactivar() {
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+}
+
+void igvTextura::setFiltroMag(GLenum filtro) {
+    filtroMag = filtro;
+    glBindTexture(GL_TEXTURE_2D, idTextura);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtro);
+}
+
+void igvTextura::setFiltroMin(GLenum filtro) {
+    filtroMin = filtro;
+    glBindTexture(GL_TEXTURE_2D, idTextura);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtro);
+}
+
+igvTextura* igvTextura::crearTableroAjedrez(int tamano, int numCuadros) {
+    igvTextura* tex = new igvTextura();
+    std::vector<unsigned char> imagen(tamano * tamano * 4);
+    int tamCuadro = tamano / numCuadros;
+
+    for (int y = 0; y < tamano; y++) {
+        for (int x = 0; x < tamano; x++) {
+            int cuadroX = x / tamCuadro;
+            int cuadroY = y / tamCuadro;
+            bool blanco = (cuadroX + cuadroY) % 2 == 0;
+
+            int idx = (y * tamano + x) * 4;
+            unsigned char color = blanco ? 255 : 0;
+            imagen[idx] = imagen[idx+1] = imagen[idx+2] = color;
+            imagen[idx+3] = 255;
+        }
+    }
+
+    tex->ancho = tamano;
+    tex->alto = tamano;
+    glEnable(GL_TEXTURE_2D);
+    glGenTextures(1, &tex->idTextura);
+    glBindTexture(GL_TEXTURE_2D, tex->idTextura);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tamano, tamano, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, imagen.data());
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    return tex;
 }

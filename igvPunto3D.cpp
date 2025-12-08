@@ -35,3 +35,14 @@ void igvPunto3D::set(const double &x, const double &y, const double &z) {
     c[Y] = y;
     c[Z] = z;
 }
+
+/**
+ * Reserva un bloque de memoria con las coordenadas en formato flotante y en
+ * coordenadas homogéneas (es decir, con cuarta coordenada = 1)
+ * @return La dirección de memoria del bloque reservado
+ * @note El bloque debe ser liberado con delete[] en algún momento en el código
+ */
+float *igvPunto3D::cloneToFloatArray() const {
+    float *res = new float[4] { (float) c[0], (float) c[1], (float) c[2], 1.0f };
+    return res;
+}

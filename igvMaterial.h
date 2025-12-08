@@ -16,35 +16,40 @@
 /**
  * Los objetos de esta clase representan propiedades de material
  */
-class igvMaterial
-{  private:
-      // atributos
-      igvColor Ka = { 0, 0, 0 }; ///< Coeficiente de reflexi�n ambiental
-      igvColor Kd = { 0, 0, 0 }; ///< Coeficiente de reflexi�n difuso
-      igvColor Ks = { 0, 0, 0 }; ///< Coeficiente de reflexi�n especular
-      double Ns = 0; ///< Exponente de Phong
+class igvMaterial {
+private:
+    // atributos
+    igvColor Ka = {0, 0, 0}; ///< Coeficiente de reflexi�n ambiental
+    igvColor Kd = {0, 0, 0}; ///< Coeficiente de reflexi�n difuso
+    igvColor Ks = {0, 0, 0}; ///< Coeficiente de reflexi�n especular
+    double Ns = 0; ///< Exponente de Phong
 
-      // M�todos
+    // M�todos
 
-   public:
-      // Constructores por defecto y destructor
-      /// Constructor por defecto
-      igvMaterial () = default;
-      /// Destructor
-      ~igvMaterial () = default;
+public:
+    // Constructores por defecto y destructor
+    /// Constructor por defecto
+    igvMaterial() = default;
 
-      // Otros constructores
-      igvMaterial ( const igvMaterial &p );   //de copia
-      igvMaterial ( igvColor _Ka, igvColor _Kd, igvColor _Ks, double _Ns );
+    /// Destructor
+    ~igvMaterial() = default;
 
-      // M�todos
-      void aplicar ();
+    // Otros constructores
+    igvMaterial(const igvMaterial &p); //de copia
+    igvMaterial(igvColor _Ka, igvColor _Kd, igvColor _Ks, double _Ns);
 
-      void set ( igvColor _Ka, igvColor _Kd, igvColor _Ks, double _Ns );
+    // M�todos
+    void aplicar();
+
+    void set(igvColor _Ka, igvColor _Kd, igvColor _Ks, double _Ns);
+
     void incrementarRDifuso(float cantidad) { Kd[0] += cantidad; }
     void incrementarREspecular(float cantidad) { Ks[0] += cantidad; }
     void incrementarExpPhong(float cantidad) { Ns += cantidad; }
+    igvColor &getKa() { return Ka; }
+    igvColor &getKd() { return Kd; }
+    igvColor &getKs() { return Ks; }
+    double getNs() const { return Ns; }
 };
 
 #endif   // __IGVMATERIAL
-
