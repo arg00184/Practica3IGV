@@ -10,6 +10,13 @@ enum MenuOpciones {
     IGV_MENU_ANIMAR_BRAZO,
     IGV_MENU_ANIMAR_CAMARA,
     IGV_MENU_DETENER_TODO,
+    IGV_MENU_SUELO_MATERIAL_1,
+    IGV_MENU_SUELO_MATERIAL_2,
+    IGV_MENU_SUELO_MATERIAL_3,
+    IGV_MENU_SUELO_SIN_TEXTURA,
+    IGV_MENU_SUELO_TEXTURA_1,
+    IGV_MENU_SUELO_TEXTURA_2,
+    IGV_MENU_SUELO_TEXTURA_3,
     IGV_MENU_SALIR
 };
 
@@ -68,6 +75,34 @@ void igvInterfaz::menuFunc(int option) {
             _instancia->orbitaAutomaticaActiva = false;
             printf("Animaciones detenidas.\n");
             break;
+        case IGV_MENU_SUELO_MATERIAL_1:
+            _instancia->escena.cambiarMaterial(0);
+            printf("Material 1 aplicado al suelo.\n");
+            break;
+        case IGV_MENU_SUELO_MATERIAL_2:
+            _instancia->escena.cambiarMaterial(1);
+            printf("Material 2 aplicado al suelo.\n");
+            break;
+        case IGV_MENU_SUELO_MATERIAL_3:
+            _instancia->escena.cambiarMaterial(2);
+            printf("Material 3 aplicado al suelo.\n");
+            break;
+        case IGV_MENU_SUELO_SIN_TEXTURA:
+            _instancia->escena.cambiarTextura(-1);
+            printf("Textura del suelo desactivada.\n");
+            break;
+        case IGV_MENU_SUELO_TEXTURA_1:
+            _instancia->escena.cambiarTextura(0);
+            printf("Textura 1 aplicada al suelo.\n");
+            break;
+        case IGV_MENU_SUELO_TEXTURA_2:
+            _instancia->escena.cambiarTextura(1);
+            printf("Textura 2 aplicada al suelo.\n");
+            break;
+        case IGV_MENU_SUELO_TEXTURA_3:
+            _instancia->escena.cambiarTextura(2);
+            printf("Textura ajedrez aplicada al suelo.\n");
+            break;
         case IGV_MENU_SALIR:
             exit(0);
     }
@@ -89,10 +124,23 @@ void igvInterfaz::create_menu() {
     glutAddMenuEntry("Animar Camara", IGV_MENU_ANIMAR_CAMARA);
     glutAddMenuEntry("Detener Todo", IGV_MENU_DETENER_TODO);
 
+    int submenu_material_suelo = glutCreateMenu(menuFunc);
+    glutAddMenuEntry("Material 1", IGV_MENU_SUELO_MATERIAL_1);
+    glutAddMenuEntry("Material 2", IGV_MENU_SUELO_MATERIAL_2);
+    glutAddMenuEntry("Material 3", IGV_MENU_SUELO_MATERIAL_3);
+
+    int submenu_textura_suelo = glutCreateMenu(menuFunc);
+    glutAddMenuEntry("Sin textura", IGV_MENU_SUELO_SIN_TEXTURA);
+    glutAddMenuEntry("Textura 1", IGV_MENU_SUELO_TEXTURA_1);
+    glutAddMenuEntry("Textura 2", IGV_MENU_SUELO_TEXTURA_2);
+    glutAddMenuEntry("Tablero de ajedrez", IGV_MENU_SUELO_TEXTURA_3);
+
     int menu_principal = glutCreateMenu(menuFunc);
     glutAddSubMenu("Modo de control", submenu_control);
     glutAddSubMenu("Sombreado", submenu_sombreado);
     glutAddSubMenu("Animacion", submenu_animacion);
+    glutAddSubMenu("Material suelo", submenu_material_suelo);
+    glutAddSubMenu("Textura suelo", submenu_textura_suelo);
     glutAddMenuEntry("Salir", IGV_MENU_SALIR);
 
     glutAttachMenu(GLUT_RIGHT_BUTTON);
