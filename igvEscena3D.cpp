@@ -124,20 +124,7 @@ void igvEscena3D::pintar_ejes() {
     glEnd();
 }
 
-// void igvEscena3D::pintar_quad() {
-//     float ini_x = 0.0;
-//     float ini_z = 0.0;
-//     float tam_x = 5.0;
-//     float tam_z = 5.0;
-//
-//     glNormal3f(0, 1, 0);
-//     glBegin(GL_QUADS);
-//     glVertex3f(ini_x, 0.0, ini_z);
-//     glVertex3f(ini_x, 0.0, ini_z + tam_z);
-//     glVertex3f(ini_x + tam_x, 0.0, ini_z + tam_z);
-//     glVertex3f(ini_x + tam_x, 0.0, ini_z);
-//     glEnd();
-// }
+
 
 void igvEscena3D::pintar_quad(float div_x, float div_z) {
     float ini_x = -2.5f;  // Centrado en origen
@@ -246,10 +233,10 @@ void igvEscena3D::cambiarTextura(int indice) {
             try {
                 switch(indice) {
                     case 0:
-                        texturas[0] = new igvTextura("textures/textura1.png");
+                        texturas[0] = new igvTextura("texturas/textura_plastico.png");
                         break;
                     case 1:
-                        texturas[1] = new igvTextura("textures/textura2.png");
+                        texturas[1] = new igvTextura("texturas/textura_rugosa.png");
                         break;
                     case 2:
                         texturas[2] = igvTextura::crearTableroAjedrez(256, 8);
