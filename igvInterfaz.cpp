@@ -93,11 +93,11 @@ void igvInterfaz::menuFunc(int option) {
             break;
         case IGV_MENU_SUELO_TEXTURA_1:
             _instancia->escena.cambiarTextura(0);
-            printf("Textura 1 aplicada al suelo.\n");
+            printf("Textura plastico aplicada al suelo.\n");
             break;
         case IGV_MENU_SUELO_TEXTURA_2:
             _instancia->escena.cambiarTextura(1);
-            printf("Textura 2 aplicada al suelo.\n");
+            printf("Textura rugosa aplicada al suelo.\n");
             break;
         case IGV_MENU_SUELO_TEXTURA_3:
             _instancia->escena.cambiarTextura(2);
@@ -131,8 +131,8 @@ void igvInterfaz::create_menu() {
 
     int submenu_textura_suelo = glutCreateMenu(menuFunc);
     glutAddMenuEntry("Sin textura", IGV_MENU_SUELO_SIN_TEXTURA);
-    glutAddMenuEntry("Textura 1", IGV_MENU_SUELO_TEXTURA_1);
-    glutAddMenuEntry("Textura 2", IGV_MENU_SUELO_TEXTURA_2);
+    glutAddMenuEntry("Textura plastico", IGV_MENU_SUELO_TEXTURA_1);
+    glutAddMenuEntry("Textura rugosa", IGV_MENU_SUELO_TEXTURA_2);
     glutAddMenuEntry("Tablero de ajedrez", IGV_MENU_SUELO_TEXTURA_3);
 
     int menu_principal = glutCreateMenu(menuFunc);
