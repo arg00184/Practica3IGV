@@ -1,8 +1,5 @@
 #ifndef __IGVESCENA3D
 #define __IGVESCENA3D
-#include "igvFuenteLuz.h"
-#include "igvMaterial.h"
-#include "igvTextura.h"
 
 #if defined(__APPLE__) && defined(__MACH__)
 #include <GLUT/glut.h>
@@ -14,6 +11,10 @@
 
 #include "igvModeloArticulado.h"
 #include "igvMallaTriangulos.h"
+#include "igvFuenteLuz.h"
+#include "igvMaterial.h"
+#include "igvTextura.h"
+
 
 class igvEscena3D {
 public:
@@ -27,9 +28,20 @@ public:
 
     void set_ejes(bool _ejes);
 
-    igvFuenteLuz *getFoco() { return foco; }
+    igvFuenteLuz* getLuzPuntual() { return luzPuntual; }
+    igvFuenteLuz* getLuzDireccional() { return luzDireccional; }
+    igvFuenteLuz* getLuzSpotlight() { return luzSpotlight; }
 
-    igvMaterial *getMaterial() { return material; };
+
+    void cambiarMaterial(int indice);
+    igvMaterial* getMaterialActual() { return materiales[materialActual]; }
+
+    void cambiarTextura(int indice);  // -1 para desactivar
+    void setFiltroMag(GLenum filtro);
+    void setFiltroMin(GLenum filtro);
+
+    void setModoMovimientoLuz(int modo) { modoMovimientoLuz = modo; }
+    int getModoMovimientoLuz() const { return modoMovimientoLuz; }
 
     void cambiarModoSombreado();
 
@@ -74,9 +86,21 @@ private:
     bool ejes = true;
     igvModeloArticulado modelo;
     igvMallaTriangulos malla;
-    igvFuenteLuz *bombilla, *foco;
-    igvMaterial *material;
-    igvTextura *textura;
+
+    igvFuenteLuz* luzPuntual;
+    igvFuenteLuz* luzDireccional;
+    igvFuenteLuz* luzSpotlight;
+
+    igvMaterial* materiales[3];
+    int materialActual = 0;
+
+    igvTextura* texturas[3];
+    int texturaActual = -1;        // -1 = sin textura
+    bool texturaActiva = false;
+
+    int modoMovimientoLuz = 0;     // 0=ninguno, 1=puntual, 2=spotlight
+
+
     bool mallaCargada = false;
     bool modoSeleccion = false;
     int parteSeleccionada = -1; // -1: ninguna, 0: base, 1: brazo1, 2: brazo2, 3: pantalla
@@ -96,9 +120,13 @@ private:
 
     void pintar_ejes();
 
-    void pintar_quad();
+    //void pintar_quad();
 
     void pintar_quad(float div_x, float div_z);
+
+    void inicializarLuces();
+    void inicializarMateriales();
+    void inicializarTexturas();
 
 public:
     igvModeloArticulado& getModelo() { return modelo; }

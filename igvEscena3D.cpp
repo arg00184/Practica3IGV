@@ -5,46 +5,98 @@
 #include "igvPunto3D.h"
 
 
+
 igvEscena3D::igvEscena3D() {
     ejes = true;
-    bombilla = new igvFuenteLuz(
-         GL_LIGHT0,
-         igvPunto3D(1, 1, 1),
-         igvColor(0, 0, 0, 1),
-         igvColor(1, 1, 1, 1),
-         igvColor(1, 1, 1, 1),
-         1, 0, 0
- );
-    bombilla->encender();
 
-    foco = new igvFuenteLuz(
-            GL_LIGHT1,
-            igvPunto3D(3, 1, 1),
-            igvColor(0, 0, 0, 1),
-            igvColor(1, 1, 1, 1),
-            igvColor(1, 1, 1, 1),
-            1, 0, 0,
-            igvPunto3D(0, -1, 0),
-            45,
-            0
-    );
-    foco->encender();
-
-    material = new igvMaterial(
-            igvColor(0.15, 0, 0),
-            igvColor(0.5, 0, 0),
-            igvColor(0.5, 0, 0),
-            120
-    );
-    textura = nullptr;
+    inicializarLuces();
+    inicializarMateriales();
+    inicializarTexturas();
 }
 
 igvEscena3D::~igvEscena3D() {
-    delete bombilla;
-    delete foco;
-    delete material;
-    delete textura;
+    delete luzPuntual;
+    delete luzDireccional;
+    delete luzSpotlight;
+
+    for (int i = 0; i < 3; i++) {
+        delete materiales[i];
+        if (texturas[i]) delete texturas[i];
+    }
 }
+
+void igvEscena3D::inicializarLuces() {
+    // Luz puntual (GL_LIGHT0)
+    luzPuntual = new igvFuenteLuz(
+        GL_LIGHT0,
+        igvPunto3D(2, 3, 2),           // Posición sobre la escena
+        igvColor(0.1, 0.1, 0.1, 1),    // Ambiente
+        igvColor(1, 1, 1, 1),          // Difuso
+        igvColor(1, 1, 1, 1),          // Especular
+        1, 0, 0                         // Atenuación
+    );
+    luzPuntual->encender();
+
+    // Luz direccional (GL_LIGHT1) - simula el sol
+    luzDireccional = new igvFuenteLuz(
+        GL_LIGHT1,
+        igvPunto3D(0, 1, 0),           // Dirección (w=0 para direccional)
+        igvColor(0.2, 0.2, 0.2, 1),
+        igvColor(0.8, 0.8, 0.7, 1),
+        igvColor(0.5, 0.5, 0.5, 1),
+        1, 0, 0
+    );
+    luzDireccional->encender();
+
+    // Spotlight (GL_LIGHT2)
+    luzSpotlight = new igvFuenteLuz(
+        GL_LIGHT2,
+        igvPunto3D(3, 2, 3),           // Posición
+        igvColor(0, 0, 0, 1),
+        igvColor(1, 1, 0.8, 1),        // Luz cálida
+        igvColor(1, 1, 1, 1),
+        1, 0, 0,
+        igvPunto3D(0, -1, 0),          // Dirección: hacia abajo
+        30,                             // Ángulo de apertura
+        10                              // Exponente
+    );
+    luzSpotlight->encender();
+}
+
+// ============ INICIALIZAR MATERIALES ============
+void igvEscena3D::inicializarMateriales() {
+    // Material 1: Rojo brillante
+    materiales[0] = new igvMaterial(
+        igvColor(0.15, 0.0, 0.0),      // Ka
+        igvColor(0.6, 0.1, 0.1),       // Kd
+        igvColor(0.8, 0.8, 0.8),       // Ks
+        100                             // Ns
+    );
+
+    // Material 2: Azul mate
+    materiales[1] = new igvMaterial(
+        igvColor(0.0, 0.0, 0.15),
+        igvColor(0.1, 0.1, 0.5),
+        igvColor(0.2, 0.2, 0.3),
+        20
+    );
+
+    // Material 3: Dorado
+    materiales[2] = new igvMaterial(
+        igvColor(0.24725, 0.1995, 0.0745),
+        igvColor(0.75164, 0.60648, 0.22648),
+        igvColor(0.628281, 0.555802, 0.366065),
+        51.2
+    );
+}
+
+// ============ INICIALIZAR TEXTURAS ============
+void igvEscena3D::inicializarTexturas() {
+    texturas[0] = nullptr;  // Se carga bajo demanda
+    texturas[1] = nullptr;
+    texturas[2] = nullptr;
+}
+
 
 void igvEscena3D::pintar_ejes() {
     GLfloat rojo[] = {1, 0, 0, 1.0};
@@ -70,45 +122,52 @@ void igvEscena3D::pintar_ejes() {
     glEnd();
 }
 
-void igvEscena3D::pintar_quad() {
-    float ini_x = 0.0;
-    float ini_z = 0.0;
-    float tam_x = 5.0;
-    float tam_z = 5.0;
-
-    glNormal3f(0, 1, 0);
-    glBegin(GL_QUADS);
-    glVertex3f(ini_x, 0.0, ini_z);
-    glVertex3f(ini_x, 0.0, ini_z + tam_z);
-    glVertex3f(ini_x + tam_x, 0.0, ini_z + tam_z);
-    glVertex3f(ini_x + tam_x, 0.0, ini_z);
-    glEnd();
-}
+// void igvEscena3D::pintar_quad() {
+//     float ini_x = 0.0;
+//     float ini_z = 0.0;
+//     float tam_x = 5.0;
+//     float tam_z = 5.0;
+//
+//     glNormal3f(0, 1, 0);
+//     glBegin(GL_QUADS);
+//     glVertex3f(ini_x, 0.0, ini_z);
+//     glVertex3f(ini_x, 0.0, ini_z + tam_z);
+//     glVertex3f(ini_x + tam_x, 0.0, ini_z + tam_z);
+//     glVertex3f(ini_x + tam_x, 0.0, ini_z);
+//     glEnd();
+// }
 
 void igvEscena3D::pintar_quad(float div_x, float div_z) {
-    float ini_x = 0.0;
-    float ini_z = 0.0;
-    float tam_x = 5.0;
-    float tam_z = 5.0;
+    float ini_x = -2.5f;  // Centrado en origen
+    float ini_z = -2.5f;
+    float tam_x = 5.0f;
+    float tam_z = 5.0f;
 
     float longX = tam_x / div_x;
     float longZ = tam_z / div_z;
 
     glNormal3f(0, 1, 0);
+
     for (int i = 0; i < div_x; i++) {
         for (int j = 0; j < div_z; j++) {
             glBegin(GL_QUADS);
-            glTexCoord2f((ini_x + i * longX) / tam_x, (ini_z + j * longZ) / tam_z);
-            glVertex3f(ini_x + i * longX, 0.0f, ini_z + j * longZ);
 
-            glTexCoord2f((ini_x + i * longX) / tam_x, (ini_z + (j + 1) * longZ) / tam_z);
-            glVertex3f(ini_x + i * longX, 0.0f, ini_z + (j + 1) * longZ);
+            float x0 = ini_x + i * longX;
+            float z0 = ini_z + j * longZ;
+            float x1 = ini_x + (i + 1) * longX;
+            float z1 = ini_z + (j + 1) * longZ;
 
-            glTexCoord2f((ini_x + (i + 1) * longX) / tam_x, (ini_z + (j + 1) * longZ) / tam_z);
-            glVertex3f(ini_x + (i + 1) * longX, 0.0f, ini_z + (j + 1) * longZ);
+            // Coordenadas de textura normalizadas [0,1]
+            float s0 = (float)i / div_x;
+            float t0 = (float)j / div_z;
+            float s1 = (float)(i + 1) / div_x;
+            float t1 = (float)(j + 1) / div_z;
 
-            glTexCoord2f((ini_x + (i + 1) * longX) / tam_x, (ini_z + j * longZ) / tam_z);
-            glVertex3f(ini_x + (i + 1) * longX, 0.0f, ini_z + j * longZ);
+            glTexCoord2f(s0, t0); glVertex3f(x0, 0.0f, z0);
+            glTexCoord2f(s0, t1); glVertex3f(x0, 0.0f, z1);
+            glTexCoord2f(s1, t1); glVertex3f(x1, 0.0f, z1);
+            glTexCoord2f(s1, t0); glVertex3f(x1, 0.0f, z0);
+
             glEnd();
         }
     }
@@ -122,31 +181,29 @@ void igvEscena3D::visualizar() {
         pintar_ejes();
     }
 
-    // luces se aplican antes de las transformaciones a la escena para que permanezcan fijas
+    luzPuntual->aplicar();
+    luzDireccional->aplicar();
+    luzSpotlight->aplicar();
 
-    // TODO: APARTADO A: Define y aplica la luz puntual especificada en el gui�n de pr�cticas
-    bombilla->aplicar(); //Creo las luces, materiales y textura en el constructor para no generarlas con cada actualización de la ventana
 
-    // TODO: APARTADO E: Define y aplica la luz tipo foco especificada en el gui�n de pr�cticas
-    foco->aplicar();
+    glPushMatrix();
+    glTranslatef(0, -0.5f, 0);
 
-    /* TODO: Apartado B: definir y aplicar las propiedades de material indicadas en el gui�n de pr�cticas */
-    material->aplicar();
+    // Aplicar material del suelo
+    materiales[materialActual]->aplicar();
 
-    /* TODO: Apartado D: sustituir los valores correspondientes a la componente R del coeficiende difuso,
-                   la componente R del coeficiente especular y el exponente de Phong, por el valor
-                          del atributo correspondiente de la clase igvEscena */
-    //Teclas
-
-    /* TODO: Apartado F: A�ade aqu� la creaci�n del objeto textura y su aplicaci�n */
-    if(textura==nullptr){
-        textura = new igvTextura((char *) "../mapa.png"); //Solo la cargo la 1 vez
+    // Aplicar textura si está activa
+    if (texturaActiva && texturas[texturaActual] != nullptr) {
+        glEnable(GL_TEXTURE_2D);
+        texturas[texturaActual]->aplicar();
+    } else {
+        glDisable(GL_TEXTURE_2D);
     }
-    textura->aplicar();
+
     pintar_quad(50, 50);
 
-    //pintar_quad ();
-
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
 
     glPushMatrix();
     glTranslatef(traslacionX, traslacionY, traslacionZ);
@@ -172,6 +229,52 @@ void igvEscena3D::visualizar() {
     glPopMatrix();
 }
 
+void igvEscena3D::cambiarMaterial(int indice) {
+    if (indice >= 0 && indice < 3) {
+        materialActual = indice;
+    }
+}
+
+void igvEscena3D::cambiarTextura(int indice) {
+    if (indice < 0) {
+        texturaActiva = false;
+        texturaActual = -1;
+    } else if (indice < 3) {
+        // Cargar textura bajo demanda
+        if (texturas[indice] == nullptr) {
+            switch(indice) {
+                case 0:
+                    texturas[0] = new igvTextura("mapa.png");
+                    break;
+                case 1:
+                    texturas[1] = new igvTextura("textura2.png");
+                    break;
+                case 2:
+                    texturas[2] = igvTextura::crearTableroAjedrez(256, 8);
+                    break;
+            }
+        }
+        texturaActual = indice;
+        texturaActiva = true;
+    }
+}
+
+
+void igvEscena3D::setFiltroMag(GLenum filtro) {
+    for (int i = 0; i < 3; i++) {
+        if (texturas[i] != nullptr) {
+            texturas[i]->setFiltroMag(filtro);
+        }
+    }
+}
+
+void igvEscena3D::setFiltroMin(GLenum filtro) {
+    for (int i = 0; i < 3; i++) {
+        if (texturas[i] != nullptr) {
+            texturas[i]->setFiltroMin(filtro);
+        }
+    }
+}
 bool igvEscena3D::get_ejes() {
     return ejes;
 }
