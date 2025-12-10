@@ -297,6 +297,20 @@ void igvEscena3D::cambiarUsoNormales() {
     }
 }
 
+void igvEscena3D::setModoSombreadoSuave(bool habilitar) {
+    modelo.setModoSombreadoSuave(habilitar);
+    if (mallaCargada) {
+        malla.setGouraud(habilitar);
+    }
+}
+
+void igvEscena3D::setUsoNormales(bool habilitar) {
+    modelo.setUsoNormales(habilitar);
+    if (mallaCargada) {
+        malla.setUsoNormales(habilitar);
+    }
+}
+
 void igvEscena3D::rotarBaseLampara(float incremento) {
     modelo.rotarBase(incremento);
 }

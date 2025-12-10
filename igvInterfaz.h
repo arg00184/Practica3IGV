@@ -31,6 +31,8 @@ public:
 
     static void displayFunc();
 
+    static void menuFunc(int option);
+
     static void mouseFunc(int button, int state, int x, int y);
 
     static void motionFunc(int x, int y);

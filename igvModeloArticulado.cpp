@@ -450,6 +450,14 @@ void igvModeloArticulado::cambiarUsoNormales() {
     usar_normales = !usar_normales;
 }
 
+void igvModeloArticulado::setModoSombreadoSuave(bool habilitar) {
+    sombreado_suave = habilitar;
+}
+
+void igvModeloArticulado::setUsoNormales(bool habilitar) {
+    usar_normales = habilitar;
+}
+
 void igvModeloArticulado::animarContinuo() {
     // Base (giro infinito, sin límites)
     anguloBase += velBase;

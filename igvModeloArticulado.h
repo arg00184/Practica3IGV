@@ -73,6 +73,8 @@ public:
   // Métodos para cambiar visualización
   void cambiarModoSombreado();
   void cambiarUsoNormales();
+  void setModoSombreadoSuave(bool habilitar);
+  void setUsoNormales(bool habilitar);
 
   void animarContinuo();
 };

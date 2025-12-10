@@ -43,6 +43,8 @@ public:
 
     void cambiarnormales() { usarnormales = !usarnormales; }
     void cambiarvis() { gouraud = !gouraud; }
+    void setGouraud(bool habilitar) { gouraud = habilitar; }
+    void setUsoNormales(bool habilitar) { usarnormales = habilitar; }
 };
 
 #endif   // __IGVMALLATRIANGULOS
