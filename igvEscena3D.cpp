@@ -240,14 +240,19 @@ void igvEscena3D::cambiarTextura(int indice) {
         texturaActiva = false;
         texturaActual = -1;
     } else if (indice < 3) {
-        // Cargar textura bajo demanda
         if (texturas[indice] == nullptr) {
             switch(indice) {
                 case 0:
-                    texturas[0] = new igvTextura("mapa.png");
+                    texturas[0] = igvTextura::crearRayas(256, 12,
+                                                        166, 124, 82,   // marron claro
+                                                        110, 81, 55,    // marron oscuro
+                                                        true);
                     break;
                 case 1:
-                    texturas[1] = new igvTextura("textura2.png");
+                    texturas[1] = igvTextura::crearRayas(256, 16,
+                                                        80, 110, 140,   // azul acero
+                                                        40, 60, 80,     // azul oscuro
+                                                        false);
                     break;
                 case 2:
                     texturas[2] = igvTextura::crearTableroAjedrez(256, 8);
