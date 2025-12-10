@@ -1,5 +1,7 @@
 #include <cstdlib>
 #include <stdio.h>
+#include <exception>
+#include <iostream>
 #include "igvEscena3D.h"
 
 #include "igvPunto3D.h"
@@ -241,22 +243,21 @@ void igvEscena3D::cambiarTextura(int indice) {
         texturaActual = -1;
     } else if (indice < 3) {
         if (texturas[indice] == nullptr) {
-            switch(indice) {
-                case 0:
-                    texturas[0] = igvTextura::crearRayas(256, 12,
-                                                        166, 124, 82,   // marron claro
-                                                        110, 81, 55,    // marron oscuro
-                                                        true);
-                    break;
-                case 1:
-                    texturas[1] = igvTextura::crearRayas(256, 16,
-                                                        80, 110, 140,   // azul acero
-                                                        40, 60, 80,     // azul oscuro
-                                                        false);
-                    break;
-                case 2:
-                    texturas[2] = igvTextura::crearTableroAjedrez(256, 8);
-                    break;
+            try {
+                switch(indice) {
+                    case 0:
+                        texturas[0] = new igvTextura("textures/textura1.png");
+                        break;
+                    case 1:
+                        texturas[1] = new igvTextura("textures/textura2.png");
+                        break;
+                    case 2:
+                        texturas[2] = igvTextura::crearTableroAjedrez(256, 8);
+                        break;
+                }
+            } catch (const std::exception& e) {
+                std::cerr << "No se pudo cargar la textura: " << e.what() << "\n";
+                return;
             }
         }
         texturaActual = indice;
