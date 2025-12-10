@@ -2,12 +2,48 @@
 #include <stdio.h>
 #include "igvEscena3D.h"
 
+#include "igvPunto3D.h"
+
+
 igvEscena3D::igvEscena3D() {
-    ejes = false;
-    mallaCargada = malla.cargarOBJ("airplane_triangles.obj");
+    ejes = true;
+    bombilla = new igvFuenteLuz(
+         GL_LIGHT0,
+         igvPunto3D(1, 1, 1),
+         igvColor(0, 0, 0, 1),
+         igvColor(1, 1, 1, 1),
+         igvColor(1, 1, 1, 1),
+         1, 0, 0
+ );
+    bombilla->encender();
+
+    foco = new igvFuenteLuz(
+            GL_LIGHT1,
+            igvPunto3D(3, 1, 1),
+            igvColor(0, 0, 0, 1),
+            igvColor(1, 1, 1, 1),
+            igvColor(1, 1, 1, 1),
+            1, 0, 0,
+            igvPunto3D(0, -1, 0),
+            45,
+            0
+    );
+    foco->encender();
+
+    material = new igvMaterial(
+            igvColor(0.15, 0, 0),
+            igvColor(0.5, 0, 0),
+            igvColor(0.5, 0, 0),
+            120
+    );
+    textura = nullptr;
 }
 
 igvEscena3D::~igvEscena3D() {
+    delete bombilla;
+    delete foco;
+    delete material;
+    delete textura;
 }
 
 void igvEscena3D::pintar_ejes() {
@@ -15,31 +51,102 @@ void igvEscena3D::pintar_ejes() {
     GLfloat verde[] = {0, 1, 0, 1.0};
     GLfloat azul[] = {0, 0, 1, 1.0};
 
+    glMaterialfv(GL_FRONT, GL_EMISSION, rojo);
     glBegin(GL_LINES);
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, rojo);
     glVertex3f(1000, 0, 0);
     glVertex3f(-1000, 0, 0);
+    glEnd();
 
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, verde);
+    glMaterialfv(GL_FRONT, GL_EMISSION, verde);
+    glBegin(GL_LINES);
     glVertex3f(0, 1000, 0);
     glVertex3f(0, -1000, 0);
+    glEnd();
 
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, azul);
+    glMaterialfv(GL_FRONT, GL_EMISSION, azul);
+    glBegin(GL_LINES);
     glVertex3f(0, 0, 1000);
     glVertex3f(0, 0, -1000);
     glEnd();
 }
 
+void igvEscena3D::pintar_quad() {
+    float ini_x = 0.0;
+    float ini_z = 0.0;
+    float tam_x = 5.0;
+    float tam_z = 5.0;
+
+    glNormal3f(0, 1, 0);
+    glBegin(GL_QUADS);
+    glVertex3f(ini_x, 0.0, ini_z);
+    glVertex3f(ini_x, 0.0, ini_z + tam_z);
+    glVertex3f(ini_x + tam_x, 0.0, ini_z + tam_z);
+    glVertex3f(ini_x + tam_x, 0.0, ini_z);
+    glEnd();
+}
+
+void igvEscena3D::pintar_quad(float div_x, float div_z) {
+    float ini_x = 0.0;
+    float ini_z = 0.0;
+    float tam_x = 5.0;
+    float tam_z = 5.0;
+
+    float longX = tam_x / div_x;
+    float longZ = tam_z / div_z;
+
+    glNormal3f(0, 1, 0);
+    for (int i = 0; i < div_x; i++) {
+        for (int j = 0; j < div_z; j++) {
+            glBegin(GL_QUADS);
+            glTexCoord2f((ini_x + i * longX) / tam_x, (ini_z + j * longZ) / tam_z);
+            glVertex3f(ini_x + i * longX, 0.0f, ini_z + j * longZ);
+
+            glTexCoord2f((ini_x + i * longX) / tam_x, (ini_z + (j + 1) * longZ) / tam_z);
+            glVertex3f(ini_x + i * longX, 0.0f, ini_z + (j + 1) * longZ);
+
+            glTexCoord2f((ini_x + (i + 1) * longX) / tam_x, (ini_z + (j + 1) * longZ) / tam_z);
+            glVertex3f(ini_x + (i + 1) * longX, 0.0f, ini_z + (j + 1) * longZ);
+
+            glTexCoord2f((ini_x + (i + 1) * longX) / tam_x, (ini_z + j * longZ) / tam_z);
+            glVertex3f(ini_x + (i + 1) * longX, 0.0f, ini_z + j * longZ);
+            glEnd();
+        }
+    }
+}
+
 void igvEscena3D::visualizar() {
-    GLfloat light0[] = {10, 8, 9, 1};
-    glLightfv(GL_LIGHT0, GL_POSITION, light0);
-    glEnable(GL_LIGHT0);
 
     glPushMatrix();
 
     if (ejes) {
         pintar_ejes();
     }
+
+    // luces se aplican antes de las transformaciones a la escena para que permanezcan fijas
+
+    // TODO: APARTADO A: Define y aplica la luz puntual especificada en el gui�n de pr�cticas
+    bombilla->aplicar(); //Creo las luces, materiales y textura en el constructor para no generarlas con cada actualización de la ventana
+
+    // TODO: APARTADO E: Define y aplica la luz tipo foco especificada en el gui�n de pr�cticas
+    foco->aplicar();
+
+    /* TODO: Apartado B: definir y aplicar las propiedades de material indicadas en el gui�n de pr�cticas */
+    material->aplicar();
+
+    /* TODO: Apartado D: sustituir los valores correspondientes a la componente R del coeficiende difuso,
+                   la componente R del coeficiente especular y el exponente de Phong, por el valor
+                          del atributo correspondiente de la clase igvEscena */
+    //Teclas
+
+    /* TODO: Apartado F: A�ade aqu� la creaci�n del objeto textura y su aplicaci�n */
+    if(textura==nullptr){
+        textura = new igvTextura((char *) "../mapa.png"); //Solo la cargo la 1 vez
+    }
+    textura->aplicar();
+    pintar_quad(50, 50);
+
+    //pintar_quad ();
+
 
     glPushMatrix();
     glTranslatef(traslacionX, traslacionY, traslacionZ);

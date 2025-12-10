@@ -320,6 +320,28 @@ void igvInterfaz::keyboardFunc(unsigned char key, int x, int y) {
                 printf("Brazo 1 seleccionado - Usa las flechas para rotar\n");
             }
             break;
+
+        case 'd': // Apartado E: aumentar en 0.1 la componente R del coeficiente difuso del material
+            _instancia->escena.getMaterial()->incrementarRDifuso(0.1);
+            break;
+        case 'D': // Apartado E: disminuir en 0.1 la componente R del coeficiente difuso del material
+            _instancia->escena.getMaterial()->incrementarRDifuso(-0.1);
+            break;
+        case 's': // Apartado E: aumentar en 0.1 la componente R del coeficiente especular del material
+            _instancia->escena.getMaterial()->incrementarREspecular(0.1);
+            break;
+        case 'S': // Apartado E: disminuir en 0.1 la componente R del coeficiente especular del material
+            _instancia->escena.getMaterial()->incrementarREspecular(-0.1);
+            break;
+        case 'p': // Apartado E: aumentar en 10 el exponente de Phong del material
+            _instancia->escena.getMaterial()->incrementarExpPhong(10);
+            break;
+        case 'P': // Apartado E: disminuir en 10 el exponente de Phong del material
+            _instancia->escena.getMaterial()->incrementarExpPhong(-10);
+            break;
+        case 'e': // activa/desactiva la visualizaci�n de los ejes
+            _instancia->escena.set_ejes(!_instancia->escena.get_ejes());
+            break;
         case '3':
             if (!_instancia->modoTransformacionGlobal) {
                 _instancia->escena.setParteSeleccionada(2);

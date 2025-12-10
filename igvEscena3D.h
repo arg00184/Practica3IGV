@@ -1,5 +1,8 @@
 #ifndef __IGVESCENA3D
 #define __IGVESCENA3D
+#include "igvFuenteLuz.h"
+#include "igvMaterial.h"
+#include "igvTextura.h"
 
 #if defined(__APPLE__) && defined(__MACH__)
 #include <GLUT/glut.h>
@@ -23,6 +26,10 @@ public:
     bool get_ejes();
 
     void set_ejes(bool _ejes);
+
+    igvFuenteLuz *getFoco() { return foco; }
+
+    igvMaterial *getMaterial() { return material; };
 
     void cambiarModoSombreado();
 
@@ -67,6 +74,9 @@ private:
     bool ejes = true;
     igvModeloArticulado modelo;
     igvMallaTriangulos malla;
+    igvFuenteLuz *bombilla, *foco;
+    igvMaterial *material;
+    igvTextura *textura;
     bool mallaCargada = false;
     bool modoSeleccion = false;
     int parteSeleccionada = -1; // -1: ninguna, 0: base, 1: brazo1, 2: brazo2, 3: pantalla
@@ -85,6 +95,10 @@ private:
     int identificarPartePorColor(unsigned char r, unsigned char g, unsigned char b);
 
     void pintar_ejes();
+
+    void pintar_quad();
+
+    void pintar_quad(float div_x, float div_z);
 
 public:
     igvModeloArticulado& getModelo() { return modelo; }
