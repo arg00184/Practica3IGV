@@ -105,6 +105,48 @@ igvTextura* igvTextura::crearTableroAjedrez(int tamano, int numCuadros) {
     glBindTexture(GL_TEXTURE_2D, tex->idTextura);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tamano, tamano, 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, imagen.data());
+    // Para esta textura queremos respetar los colores blanco y negro del tablero
+    // sin que el material de la superficie los tiña, por lo que sustituimos el
+    // color resultante en lugar de modularlo con el material.
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    return tex;
+}
+
+igvTextura* igvTextura::crearRayas(int tamano, int numRayas,
+                                   unsigned char r1, unsigned char g1, unsigned char b1,
+                                   unsigned char r2, unsigned char g2, unsigned char b2,
+                                   bool vertical) {
+    igvTextura* tex = new igvTextura();
+    std::vector<unsigned char> imagen(tamano * tamano * 4);
+    int tamRaya = tamano / numRayas;
+
+    for (int y = 0; y < tamano; y++) {
+        for (int x = 0; x < tamano; x++) {
+            bool rayaPrincipal = vertical ? ((x / tamRaya) % 2 == 0) : ((y / tamRaya) % 2 == 0);
+            unsigned char r = rayaPrincipal ? r1 : r2;
+            unsigned char g = rayaPrincipal ? g1 : g2;
+            unsigned char b = rayaPrincipal ? b1 : b2;
+
+            int idx = (y * tamano + x) * 4;
+            imagen[idx] = r;
+            imagen[idx + 1] = g;
+            imagen[idx + 2] = b;
+            imagen[idx + 3] = 255;
+        }
+    }
+
+    tex->ancho = tamano;
+    tex->alto = tamano;
+    glEnable(GL_TEXTURE_2D);
+    glGenTextures(1, &tex->idTextura);
+    glBindTexture(GL_TEXTURE_2D, tex->idTextura);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tamano, tamano, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, imagen.data());
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
