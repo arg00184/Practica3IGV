@@ -125,7 +125,6 @@ private:
 
     void pintar_ejes();
 
-    //void pintar_quad();
 
     void pintar_quad(float div_x, float div_z);
 
