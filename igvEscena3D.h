@@ -47,6 +47,10 @@ public:
 
     void cambiarUsoNormales();
 
+    void setModoSombreadoSuave(bool habilitar);
+
+    void setUsoNormales(bool habilitar);
+
     void rotarBaseLampara(float incremento);
 
     void rotarBrazo1Lampara(float incremento);

@@ -2,6 +2,17 @@
 
 #include "igvInterfaz.h"
 
+enum MenuOpciones {
+    IGV_MENU_MODO_TECLADO = 1,
+    IGV_MENU_MODO_RATON,
+    IGV_MENU_SOMBREADO_PLANO,
+    IGV_MENU_SOMBREADO_SUAVE,
+    IGV_MENU_ANIMAR_BRAZO,
+    IGV_MENU_ANIMAR_CAMARA,
+    IGV_MENU_DETENER_TODO,
+    IGV_MENU_SALIR
+};
+
 igvInterfaz *igvInterfaz::_instancia = nullptr;
 
 igvInterfaz::igvInterfaz() {
@@ -18,6 +29,73 @@ igvInterfaz &igvInterfaz::getInstancia() {
     }
 
     return *_instancia;
+}
+
+void igvInterfaz::menuFunc(int option) {
+    switch (option) {
+        case IGV_MENU_MODO_TECLADO:
+            _instancia->modoTransformacionGlobal = false;
+            _instancia->modoSeleccion = true;
+            _instancia->escena.activarModoSeleccion(true);
+            _instancia->arrastrando = false;
+            _instancia->camara.desactivarMovimiento();
+            printf("Control por teclado activado. Usa las teclas indicadas en la ayuda inicial.\n");
+            break;
+        case IGV_MENU_MODO_RATON:
+            _instancia->modoTransformacionGlobal = false;
+            _instancia->modoSeleccion = true;
+            _instancia->escena.activarModoSeleccion(true);
+            printf("Control por raton activado. Pulsa y arrastra con el boton izquierdo para manipular.\n");
+            break;
+        case IGV_MENU_SOMBREADO_PLANO:
+            _instancia->escena.setModoSombreadoSuave(false);
+            printf("Sombreado plano activado.\n");
+            break;
+        case IGV_MENU_SOMBREADO_SUAVE:
+            _instancia->escena.setModoSombreadoSuave(true);
+            printf("Sombreado suave (Gouraud) activado.\n");
+            break;
+        case IGV_MENU_ANIMAR_BRAZO:
+            _instancia->animacionModeloActiva = true;
+            printf("Animacion del modelo activada.\n");
+            break;
+        case IGV_MENU_ANIMAR_CAMARA:
+            _instancia->orbitaAutomaticaActiva = true;
+            printf("Animacion de orbita de la camara activada.\n");
+            break;
+        case IGV_MENU_DETENER_TODO:
+            _instancia->animacionModeloActiva = false;
+            _instancia->orbitaAutomaticaActiva = false;
+            printf("Animaciones detenidas.\n");
+            break;
+        case IGV_MENU_SALIR:
+            exit(0);
+    }
+
+    glutPostRedisplay();
+}
+
+void igvInterfaz::create_menu() {
+    int submenu_control = glutCreateMenu(menuFunc);
+    glutAddMenuEntry("Control por Teclado", IGV_MENU_MODO_TECLADO);
+    glutAddMenuEntry("Control por Raton", IGV_MENU_MODO_RATON);
+
+    int submenu_sombreado = glutCreateMenu(menuFunc);
+    glutAddMenuEntry("Sombreado Plano", IGV_MENU_SOMBREADO_PLANO);
+    glutAddMenuEntry("Sombreado Suave (Gouraud)", IGV_MENU_SOMBREADO_SUAVE);
+
+    int submenu_animacion = glutCreateMenu(menuFunc);
+    glutAddMenuEntry("Animar Modelo", IGV_MENU_ANIMAR_BRAZO);
+    glutAddMenuEntry("Animar Camara", IGV_MENU_ANIMAR_CAMARA);
+    glutAddMenuEntry("Detener Todo", IGV_MENU_DETENER_TODO);
+
+    int menu_principal = glutCreateMenu(menuFunc);
+    glutAddSubMenu("Modo de control", submenu_control);
+    glutAddSubMenu("Sombreado", submenu_sombreado);
+    glutAddSubMenu("Animacion", submenu_animacion);
+    glutAddMenuEntry("Salir", IGV_MENU_SALIR);
+
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
 void igvInterfaz::configura_entorno(int argc, char **argv
@@ -39,6 +117,8 @@ void igvInterfaz::configura_entorno(int argc, char **argv
 
     glEnable(GL_LIGHTING);
     glEnable(GL_NORMALIZE);
+
+    create_menu();
 
     mostrarAyudaInicial();
 }
