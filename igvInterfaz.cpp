@@ -442,11 +442,39 @@ void igvInterfaz::specialFunc(int key, int x, int y) {
     bool camaraActiva = _instancia->camara.getMovimientoActivo();
     bool modoGlobal = _instancia->modoTransformacionGlobal;
     bool hayParteSeleccionada = _instancia->escena.getParteSeleccionada() != -1;
+    int modoMovimientoLuz = _instancia->escena.getModoMovimientoLuz();
+
+    igvFuenteLuz* luzSeleccionada = nullptr;
+    if (modoMovimientoLuz == 1) {
+        luzSeleccionada = _instancia->escena.getLuzPuntual();
+    } else if (modoMovimientoLuz == 2) {
+        luzSeleccionada = _instancia->escena.getLuzSpotlight();
+    }
 
     if (!modoGlobal && hayParteSeleccionada && camaraActiva) {
         _instancia->camara.desactivarMovimiento();
         camaraActiva = false;
         printf("Modo camara desactivado: las flechas ahora mueven la parte seleccionada\n");
+    }
+
+    if (luzSeleccionada != nullptr) {
+        switch (key) {
+            case GLUT_KEY_DOWN:
+                luzSeleccionada->mover(0.0f, -0.2f, 0.0f);
+                break;
+            case GLUT_KEY_UP:
+                luzSeleccionada->mover(0.0f, 0.2f, 0.0f);
+                break;
+            case GLUT_KEY_RIGHT:
+                luzSeleccionada->mover(0.2f, 0.0f, 0.0f);
+                break;
+            case GLUT_KEY_LEFT:
+                luzSeleccionada->mover(-0.2f, 0.0f, 0.0f);
+                break;
+        }
+
+        glutPostRedisplay();
+        return;
     }
 
     switch (key) {
