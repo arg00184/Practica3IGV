@@ -28,6 +28,10 @@ igvEscena3D::~igvEscena3D() {
 }
 
 void igvEscena3D::inicializarLuces() {
+    // Luz ambiente global
+    GLfloat luzAmbienteGlobal[] = {0.25f, 0.25f, 0.25f, 1.0f};
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbienteGlobal);
+
     // Luz puntual (GL_LIGHT0)
     luzPuntual = new igvFuenteLuz(
         GL_LIGHT0,
@@ -204,13 +208,18 @@ void igvEscena3D::visualizar() {
     glTranslatef(0, -0.5f, 0);
 
     // Aplicar material del suelo
-    materiales[materialActual]->aplicar();
-
-    // Aplicar textura si está activa
     if (texturaActiva && texturas[texturaActual] != nullptr) {
+        // Si hay textura, usamos un material neutro para no teñirla
+        GLfloat blanco[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        GLfloat especular[] = {0.3f, 0.3f, 0.3f, 1.0f};
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blanco);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especular);
+        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 30.0f);
+
         glEnable(GL_TEXTURE_2D);
         texturas[texturaActual]->aplicar();
     } else {
+        materiales[materialActual]->aplicar();
         glDisable(GL_TEXTURE_2D);
     }
 
