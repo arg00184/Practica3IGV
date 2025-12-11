@@ -46,10 +46,10 @@ void igvEscena3D::inicializarLuces() {
     // Luz direccional (GL_LIGHT1) - simula el sol
     luzDireccional = new igvFuenteLuz(
         GL_LIGHT1,
-        igvPunto3D(-0.5, -1.0, -0.25),        // Dirección normalizada
-        igvColor(0.25, 0.25, 0.25, 1),
-        igvColor(0.75, 0.75, 0.7, 1),
-        igvColor(0.45, 0.45, 0.45, 1),
+        igvPunto3D(0, 1, 0),           // Dirección (w=0 para direccional)
+        igvColor(0.2, 0.2, 0.2, 1),
+        igvColor(0.8, 0.8, 0.7, 1),
+        igvColor(0.5, 0.5, 0.5, 1),
         1, 0, 0,
         true
     );
