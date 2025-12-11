@@ -199,6 +199,10 @@ void igvEscena3D::visualizar() {
         pintar_ejes();
     }
 
+    // Asegurar que la emisión queda desactivada para el resto de objetos
+    GLfloat sin_emision[] = {0.0f, 0.0f, 0.0f, 1.0f};
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, sin_emision);
+
     luzPuntual->aplicar();
     luzDireccional->aplicar();
     luzSpotlight->aplicar();
@@ -212,8 +216,10 @@ void igvEscena3D::visualizar() {
         // Si hay textura, usamos un material neutro para no teñirla
         GLfloat blanco[] = {1.0f, 1.0f, 1.0f, 1.0f};
         GLfloat especular[] = {0.3f, 0.3f, 0.3f, 1.0f};
+        GLfloat sin_emision_textura[] = {0.0f, 0.0f, 0.0f, 1.0f};
         glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blanco);
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especular);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, sin_emision_textura);
         glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 30.0f);
 
         glEnable(GL_TEXTURE_2D);
