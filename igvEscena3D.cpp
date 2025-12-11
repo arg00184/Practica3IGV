@@ -28,11 +28,15 @@ igvEscena3D::~igvEscena3D() {
 }
 
 void igvEscena3D::inicializarLuces() {
-    // Luz ambiente global
+    // Configuramos una luz ambiente global para que todos los objetos
+    // reciban iluminación base incluso cuando las otras fuentes estén apagadas.
+    // Las luces concretas (puntual, direccional y spotlight) se definen más
+    // abajo para cubrir los tres tipos solicitados en la práctica.
     GLfloat luzAmbienteGlobal[] = {0.25f, 0.25f, 0.25f, 1.0f};
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbienteGlobal);
 
-    // Luz puntual (GL_LIGHT0)
+    // Luz puntual (GL_LIGHT0): se atenúa con la distancia y puede moverse por
+    // la escena con las flechas cuando modoMovimientoLuz es 1.
     luzPuntual = new igvFuenteLuz(
         GL_LIGHT0,
         igvPunto3D(2, 3, 2),           // Posición sobre la escena
@@ -43,7 +47,7 @@ void igvEscena3D::inicializarLuces() {
     );
     luzPuntual->encender();
 
-    // Luz direccional (GL_LIGHT1) - simula el sol
+    // Luz direccional (GL_LIGHT1): simula el sol, solo aporta dirección.
     luzDireccional = new igvFuenteLuz(
         GL_LIGHT1,
         igvPunto3D(0, 1, 0),           // Dirección (w=0 para direccional)
@@ -55,7 +59,8 @@ void igvEscena3D::inicializarLuces() {
     );
     luzDireccional->encender();
 
-    // Spotlight (GL_LIGHT2)
+    // Spotlight (GL_LIGHT2): cono de luz focalizado. Puede desplazarse con las
+    // flechas cuando modoMovimientoLuz es 2.
     luzSpotlight = new igvFuenteLuz(
         GL_LIGHT2,
         igvPunto3D(0, 2.25, 0),        // Posición centrada sobre el suelo
@@ -213,7 +218,9 @@ void igvEscena3D::visualizar() {
     glPushMatrix();
     glTranslatef(0, -0.5f, 0);
 
-    // Aplicar material del suelo
+    // Aplicar material del suelo. Cuando hay textura activa se modula con el
+    // material seleccionado para que sigan afectando los coeficientes de la
+    // iluminación (ambiental, difusa y especular) y los filtros elegidos.
     if (texturaActiva && texturas[texturaActual] != nullptr) {
         // Usamos el material actual para que la iluminación siga afectando a la textura
         materiales[materialActual]->aplicar();
