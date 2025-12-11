@@ -17,6 +17,10 @@ enum MenuOpciones {
     IGV_MENU_SUELO_TEXTURA_1,
     IGV_MENU_SUELO_TEXTURA_2,
     IGV_MENU_SUELO_TEXTURA_3,
+    IGV_MENU_FILTRO_MAG_NEAREST,
+    IGV_MENU_FILTRO_MAG_LINEAR,
+    IGV_MENU_FILTRO_MIN_NEAREST,
+    IGV_MENU_FILTRO_MIN_LINEAR,
     IGV_MENU_SALIR
 };
 
@@ -103,6 +107,22 @@ void igvInterfaz::menuFunc(int option) {
             _instancia->escena.cambiarTextura(2);
             printf("Textura ajedrez aplicada al suelo.\n");
             break;
+        case IGV_MENU_FILTRO_MAG_NEAREST:
+            _instancia->escena.setFiltroMag(GL_NEAREST);
+            printf("Filtro MAG: GL_NEAREST aplicado.\n");
+            break;
+        case IGV_MENU_FILTRO_MAG_LINEAR:
+            _instancia->escena.setFiltroMag(GL_LINEAR);
+            printf("Filtro MAG: GL_LINEAR aplicado.\n");
+            break;
+        case IGV_MENU_FILTRO_MIN_NEAREST:
+            _instancia->escena.setFiltroMin(GL_NEAREST);
+            printf("Filtro MIN: GL_NEAREST aplicado.\n");
+            break;
+        case IGV_MENU_FILTRO_MIN_LINEAR:
+            _instancia->escena.setFiltroMin(GL_LINEAR);
+            printf("Filtro MIN: GL_LINEAR aplicado.\n");
+            break;
         case IGV_MENU_SALIR:
             exit(0);
     }
@@ -135,12 +155,19 @@ void igvInterfaz::create_menu() {
     glutAddMenuEntry("Textura rugosa", IGV_MENU_SUELO_TEXTURA_2);
     glutAddMenuEntry("Tablero de ajedrez", IGV_MENU_SUELO_TEXTURA_3);
 
+    int submenu_filtros_textura = glutCreateMenu(menuFunc);
+    glutAddMenuEntry("MAG Filter: GL_NEAREST", IGV_MENU_FILTRO_MAG_NEAREST);
+    glutAddMenuEntry("MAG Filter: GL_LINEAR", IGV_MENU_FILTRO_MAG_LINEAR);
+    glutAddMenuEntry("MIN Filter: GL_NEAREST", IGV_MENU_FILTRO_MIN_NEAREST);
+    glutAddMenuEntry("MIN Filter: GL_LINEAR", IGV_MENU_FILTRO_MIN_LINEAR);
+
     int menu_principal = glutCreateMenu(menuFunc);
     glutAddSubMenu("Modo de control", submenu_control);
     glutAddSubMenu("Sombreado", submenu_sombreado);
     glutAddSubMenu("Animacion", submenu_animacion);
     glutAddSubMenu("Material suelo", submenu_material_suelo);
     glutAddSubMenu("Textura suelo", submenu_textura_suelo);
+    glutAddSubMenu("Filtros textura", submenu_filtros_textura);
     glutAddMenuEntry("Salir", IGV_MENU_SALIR);
 
     glutAttachMenu(GLUT_RIGHT_BUTTON);
