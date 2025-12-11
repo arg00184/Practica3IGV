@@ -23,6 +23,7 @@ private:
 
     GLenum filtroMag = GL_LINEAR;
     GLenum filtroMin = GL_LINEAR;
+    GLenum modoEntorno = GL_MODULATE;
 
 public:
     igvTextura () = default;

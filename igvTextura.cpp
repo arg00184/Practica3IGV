@@ -53,6 +53,7 @@ igvTextura::igvTextura(std::string fichero) {
         }
         glGenTextures(1, &idTextura);
         glBindTexture(GL_TEXTURE_2D, idTextura);
+        modoEntorno = GL_MODULATE;
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ancho, alto, 0,
                      GL_RGBA, GL_UNSIGNED_BYTE, texeles.data());
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -75,6 +76,7 @@ igvTextura::~igvTextura ()
  */
 void igvTextura::aplicar ()
 {  glBindTexture ( GL_TEXTURE_2D, idTextura );
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, modoEntorno);
 }
 
 /**
@@ -140,7 +142,8 @@ igvTextura* igvTextura::crearTableroAjedrez(int tamano, int numCuadros) {
     // Para esta textura queremos respetar los colores blanco y negro del tablero
     // sin que el material de la superficie los tiña, por lo que sustituimos el
     // color resultante en lugar de modularlo con el material.
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    tex->modoEntorno = GL_REPLACE;
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, tex->modoEntorno);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -179,7 +182,8 @@ igvTextura* igvTextura::crearRayas(int tamano, int numRayas,
     glBindTexture(GL_TEXTURE_2D, tex->idTextura);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tamano, tamano, 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, imagen.data());
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    tex->modoEntorno = GL_MODULATE;
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, tex->modoEntorno);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
