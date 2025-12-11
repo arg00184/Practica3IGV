@@ -164,7 +164,9 @@ void igvEscena3D::pintar_quad(float div_x, float div_z) {
     float longX = tam_x / div_x;
     float longZ = tam_z / div_z;
 
-    glNormal3f(0, 1, 0);
+    // Normal constante hacia arriba para que la iluminación (Gouraud/Phong)
+    // afecte correctamente al suelo texturizado
+    glNormal3f(0.0f, 1.0f, 0.0f);
 
     for (int i = 0; i < div_x; i++) {
         for (int j = 0; j < div_z; j++) {
