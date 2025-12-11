@@ -70,6 +70,30 @@ void igvEscena3D::inicializarLuces() {
     luzSpotlight->encender();
 }
 
+void igvEscena3D::activarLuzPuntual(bool encendida) {
+    if (encendida) {
+        luzPuntual->encender();
+    } else {
+        luzPuntual->apagar();
+    }
+}
+
+void igvEscena3D::activarLuzDireccional(bool encendida) {
+    if (encendida) {
+        luzDireccional->encender();
+    } else {
+        luzDireccional->apagar();
+    }
+}
+
+void igvEscena3D::activarLuzSpotlight(bool encendida) {
+    if (encendida) {
+        luzSpotlight->encender();
+    } else {
+        luzSpotlight->apagar();
+    }
+}
+
 // ============ INICIALIZAR MATERIALES ============
 void igvEscena3D::inicializarMateriales() {
     // Material 1: Rojo brillante
