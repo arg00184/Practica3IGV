@@ -21,6 +21,16 @@ enum MenuOpciones {
     IGV_MENU_FILTRO_MAG_LINEAR,
     IGV_MENU_FILTRO_MIN_NEAREST,
     IGV_MENU_FILTRO_MIN_LINEAR,
+    IGV_MENU_LUZ_PUNTUAL_ON,
+    IGV_MENU_LUZ_PUNTUAL_OFF,
+    IGV_MENU_LUZ_DIRECCIONAL_ON,
+    IGV_MENU_LUZ_DIRECCIONAL_OFF,
+    IGV_MENU_LUZ_SPOT_ON,
+    IGV_MENU_LUZ_SPOT_OFF,
+    IGV_MENU_MOVER_LUZ_PUNTUAL,
+    IGV_MENU_MOVER_LUZ_DIRECCIONAL,
+    IGV_MENU_MOVER_LUZ_SPOT,
+    IGV_MENU_MOVER_LUZ_NONE,
     IGV_MENU_SALIR
 };
 
@@ -123,12 +133,56 @@ void igvInterfaz::menuFunc(int option) {
             _instancia->escena.setFiltroMin(GL_LINEAR);
             printf("Filtro MIN: GL_LINEAR aplicado.\n");
             break;
+        case IGV_MENU_LUZ_PUNTUAL_ON:
+            _instancia->escena.activarLuzPuntual(true);
+            printf("Luz puntual activada.\n");
+            break;
+        case IGV_MENU_LUZ_PUNTUAL_OFF:
+            _instancia->escena.activarLuzPuntual(false);
+            _instancia->escena.setModoMovimientoLuz(0);
+            printf("Luz puntual desactivada.\n");
+            break;
+        case IGV_MENU_LUZ_DIRECCIONAL_ON:
+            _instancia->escena.activarLuzDireccional(true);
+            printf("Luz direccional activada.\n");
+            break;
+        case IGV_MENU_LUZ_DIRECCIONAL_OFF:
+            _instancia->escena.activarLuzDireccional(false);
+            _instancia->escena.setModoMovimientoLuz(0);
+            printf("Luz direccional desactivada.\n");
+            break;
+        case IGV_MENU_LUZ_SPOT_ON:
+            _instancia->escena.activarLuzSpotlight(true);
+            printf("Foco de luz activado.\n");
+            break;
+        case IGV_MENU_LUZ_SPOT_OFF:
+            _instancia->escena.activarLuzSpotlight(false);
+            _instancia->escena.setModoMovimientoLuz(0);
+            printf("Foco de luz desactivado.\n");
+            break;
+        case IGV_MENU_MOVER_LUZ_PUNTUAL:
+            _instancia->escena.setModoMovimientoLuz(1);
+            printf("Movimiento de luz puntual activo (flechas y Re Pag/Av Pag ajustan X,Y,Z).\n");
+            break;
+        case IGV_MENU_MOVER_LUZ_DIRECCIONAL:
+            _instancia->escena.setModoMovimientoLuz(3);
+            printf("Movimiento de luz direccional activo (flechas y Re Pag/Av Pag ajustan el vector).\n");
+            break;
+        case IGV_MENU_MOVER_LUZ_SPOT:
+            _instancia->escena.setModoMovimientoLuz(2);
+            printf("Movimiento de foco activo (flechas y Re Pag/Av Pag ajustan X,Y,Z).\n");
+            break;
+        case IGV_MENU_MOVER_LUZ_NONE:
+            _instancia->escena.setModoMovimientoLuz(0);
+            printf("Movimiento de luces desactivado.\n");
+            break;
         case IGV_MENU_SALIR:
             exit(0);
     }
 
     glutPostRedisplay();
 }
+
 
 void igvInterfaz::create_menu() {
     int submenu_control = glutCreateMenu(menuFunc);
@@ -161,6 +215,24 @@ void igvInterfaz::create_menu() {
     glutAddMenuEntry("MIN Filter: GL_NEAREST", IGV_MENU_FILTRO_MIN_NEAREST);
     glutAddMenuEntry("MIN Filter: GL_LINEAR", IGV_MENU_FILTRO_MIN_LINEAR);
 
+    int submenu_luces_toggle = glutCreateMenu(menuFunc);
+    glutAddMenuEntry("Activar luz puntual", IGV_MENU_LUZ_PUNTUAL_ON);
+    glutAddMenuEntry("Desactivar luz puntual", IGV_MENU_LUZ_PUNTUAL_OFF);
+    glutAddMenuEntry("Activar luz direccional", IGV_MENU_LUZ_DIRECCIONAL_ON);
+    glutAddMenuEntry("Desactivar luz direccional", IGV_MENU_LUZ_DIRECCIONAL_OFF);
+    glutAddMenuEntry("Activar foco", IGV_MENU_LUZ_SPOT_ON);
+    glutAddMenuEntry("Desactivar foco", IGV_MENU_LUZ_SPOT_OFF);
+
+    int submenu_luces_mover = glutCreateMenu(menuFunc);
+    glutAddMenuEntry("Mover luz puntual", IGV_MENU_MOVER_LUZ_PUNTUAL);
+    glutAddMenuEntry("Mover luz direccional", IGV_MENU_MOVER_LUZ_DIRECCIONAL);
+    glutAddMenuEntry("Mover foco", IGV_MENU_MOVER_LUZ_SPOT);
+    glutAddMenuEntry("Dejar de mover luces", IGV_MENU_MOVER_LUZ_NONE);
+
+    int submenu_luces = glutCreateMenu(menuFunc);
+    glutAddSubMenu("Encendido", submenu_luces_toggle);
+    glutAddSubMenu("Movimiento", submenu_luces_mover);
+
     int menu_principal = glutCreateMenu(menuFunc);
     glutAddSubMenu("Modo de control", submenu_control);
     glutAddSubMenu("Sombreado", submenu_sombreado);
@@ -168,10 +240,12 @@ void igvInterfaz::create_menu() {
     glutAddSubMenu("Material suelo", submenu_material_suelo);
     glutAddSubMenu("Textura suelo", submenu_textura_suelo);
     glutAddSubMenu("Filtros textura", submenu_filtros_textura);
+    glutAddSubMenu("Luces", submenu_luces);
     glutAddMenuEntry("Salir", IGV_MENU_SALIR);
 
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
+
 
 void igvInterfaz::configura_entorno(int argc, char **argv
                                     , int _ancho_ventana, int _alto_ventana
@@ -524,6 +598,8 @@ void igvInterfaz::specialFunc(int key, int x, int y) {
         luzSeleccionada = _instancia->escena.getLuzPuntual();
     } else if (modoMovimientoLuz == 2) {
         luzSeleccionada = _instancia->escena.getLuzSpotlight();
+    } else if (modoMovimientoLuz == 3) {
+        luzSeleccionada = _instancia->escena.getLuzDireccional();
     }
 
     if (!modoGlobal && hayParteSeleccionada && camaraActiva) {
@@ -545,6 +621,12 @@ void igvInterfaz::specialFunc(int key, int x, int y) {
                 break;
             case GLUT_KEY_LEFT:
                 luzSeleccionada->mover(-0.2f, 0.0f, 0.0f);
+                break;
+            case GLUT_KEY_PAGE_UP:
+                luzSeleccionada->mover(0.0f, 0.0f, 0.2f);
+                break;
+            case GLUT_KEY_PAGE_DOWN:
+                luzSeleccionada->mover(0.0f, 0.0f, -0.2f);
                 break;
         }
 

@@ -28,6 +28,10 @@ igvEscena3D::~igvEscena3D() {
 }
 
 void igvEscena3D::inicializarLuces() {
+    // Luz ambiente global
+    GLfloat luzAmbienteGlobal[] = {0.2f, 0.2f, 0.2f, 1.0f};
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbienteGlobal);
+
     // Luz puntual (GL_LIGHT0)
     luzPuntual = new igvFuenteLuz(
         GL_LIGHT0,
@@ -42,11 +46,12 @@ void igvEscena3D::inicializarLuces() {
     // Luz direccional (GL_LIGHT1) - simula el sol
     luzDireccional = new igvFuenteLuz(
         GL_LIGHT1,
-        igvPunto3D(0, 1, 0),           // Dirección (w=0 para direccional)
+        igvPunto3D(-1, -1, -1),        // Dirección (w=0 para direccional)
         igvColor(0.2, 0.2, 0.2, 1),
         igvColor(0.8, 0.8, 0.7, 1),
         igvColor(0.5, 0.5, 0.5, 1),
-        1, 0, 0
+        1, 0, 0,
+        true
     );
     luzDireccional->encender();
 
@@ -63,6 +68,30 @@ void igvEscena3D::inicializarLuces() {
         10                              // Exponente
     );
     luzSpotlight->encender();
+}
+
+void igvEscena3D::activarLuzPuntual(bool encendida) {
+    if (encendida) {
+        luzPuntual->encender();
+    } else {
+        luzPuntual->apagar();
+    }
+}
+
+void igvEscena3D::activarLuzDireccional(bool encendida) {
+    if (encendida) {
+        luzDireccional->encender();
+    } else {
+        luzDireccional->apagar();
+    }
+}
+
+void igvEscena3D::activarLuzSpotlight(bool encendida) {
+    if (encendida) {
+        luzSpotlight->encender();
+    } else {
+        luzSpotlight->apagar();
+    }
 }
 
 // ============ INICIALIZAR MATERIALES ============
