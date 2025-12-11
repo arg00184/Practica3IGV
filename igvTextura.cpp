@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+#include <fstream>
 
 // Métodos constructores y destructor
 
@@ -11,13 +12,44 @@
  * Constructor parametrizado. Carga una textura de archivo
  * @param fichero
  */
+static std::string localizar_textura(const std::string& fichero) {
+    std::string nombre = fichero;
+    size_t pos = fichero.find_last_of("/\\");
+    if (pos != std::string::npos) {
+        nombre = fichero.substr(pos + 1);
+    }
+
+    std::vector<std::string> candidatos = {
+        fichero,
+        "../" + fichero,
+        nombre,
+        "../" + nombre
+    };
+
+    std::string probados;
+    for (const auto& ruta : candidatos) {
+        if (!probados.empty()) {
+            probados += ", ";
+        }
+        probados += ruta;
+
+        std::ifstream test(ruta, std::ios::binary);
+        if (test.good()) {
+            return ruta;
+        }
+    }
+
+    throw std::runtime_error("Archivo no encontrado. Probado en: " + probados);
+}
+
 igvTextura::igvTextura(std::string fichero) {
     glEnable(GL_TEXTURE_2D);
+    std::string ruta = localizar_textura(fichero);
     if (!glIsTexture(idTextura)) {
         std::vector<unsigned char> texeles;
-        unsigned int error = lodepng::decode(texeles, ancho, alto, fichero);
+        unsigned int error = lodepng::decode(texeles, ancho, alto, ruta);
         if (error) {
-            throw std::runtime_error("Error leyendo archivo " + fichero);
+            throw std::runtime_error("Error leyendo archivo " + ruta);
         }
         glGenTextures(1, &idTextura);
         glBindTexture(GL_TEXTURE_2D, idTextura);
