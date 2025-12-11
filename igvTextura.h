@@ -23,6 +23,7 @@ private:
 
     GLenum filtroMag = GL_LINEAR;
     GLenum filtroMin = GL_LINEAR;
+    GLenum modoEntorno = GL_MODULATE;
 
 public:
     igvTextura () = default;
@@ -39,6 +40,10 @@ public:
     void setFiltroMin(GLenum filtro);
 
     static igvTextura* crearTableroAjedrez(int tamano, int numCuadros);
+    static igvTextura* crearRayas(int tamano, int numRayas,
+                                  unsigned char r1, unsigned char g1, unsigned char b1,
+                                  unsigned char r2, unsigned char g2, unsigned char b2,
+                                  bool vertical);
 };
 
 #endif   // __IGVTEXTURA
