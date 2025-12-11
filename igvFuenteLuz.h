@@ -28,6 +28,8 @@ class igvFuenteLuz
       igvColor colorDifuso = { 0, 0, 0 }; ///< Color difuso de la luz
       igvColor colorEspecular = { 0, 0, 0 }; ///< Color especular de la luz
 
+      bool esDireccional = false; ///< Indica si se trata de una luz direccional
+
       double aten_a0 = 0; ///< Coeficiente de atenuaci�n a0
       double aten_a1 = 0; ///< Coeficiente de atenuaci�n a1
       double aten_a2 = 0; ///< Coeficiente de atenuaci�n a2
@@ -51,7 +53,7 @@ class igvFuenteLuz
       igvFuenteLuz ( const unsigned int _idLuz, const igvPunto3D &_posicion
                      , const igvColor &cAmb, const igvColor &cDif
                      , const igvColor &cEsp, const double a0, const double a1
-                     , const double a2 );
+                     , const double a2, bool _esDireccional = false );
 
       // Construye un foco
       igvFuenteLuz ( const unsigned int _idLuz, const igvPunto3D &_posicion
