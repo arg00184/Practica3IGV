@@ -28,6 +28,10 @@ igvEscena3D::~igvEscena3D() {
 }
 
 void igvEscena3D::inicializarLuces() {
+    // Luz ambiente global
+    GLfloat luzAmbienteGlobal[] = {0.25f, 0.25f, 0.25f, 1.0f};
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbienteGlobal);
+
     // Luz puntual (GL_LIGHT0)
     luzPuntual = new igvFuenteLuz(
         GL_LIGHT0,
@@ -42,27 +46,52 @@ void igvEscena3D::inicializarLuces() {
     // Luz direccional (GL_LIGHT1) - simula el sol
     luzDireccional = new igvFuenteLuz(
         GL_LIGHT1,
-        igvPunto3D(0, 1, 0),           // Dirección (w=0 para direccional)
-        igvColor(0.2, 0.2, 0.2, 1),
-        igvColor(0.8, 0.8, 0.7, 1),
-        igvColor(0.5, 0.5, 0.5, 1),
-        1, 0, 0
+        igvPunto3D(-0.5, -1.0, -0.25),        // Dirección normalizada
+        igvColor(0.25, 0.25, 0.25, 1),
+        igvColor(0.75, 0.75, 0.7, 1),
+        igvColor(0.45, 0.45, 0.45, 1),
+        1, 0, 0,
+        true
     );
     luzDireccional->encender();
 
     // Spotlight (GL_LIGHT2)
     luzSpotlight = new igvFuenteLuz(
         GL_LIGHT2,
-        igvPunto3D(3, 2, 3),           // Posición
+        igvPunto3D(0, 2.25, 0),        // Posición centrada sobre el suelo
         igvColor(0, 0, 0, 1),
         igvColor(1, 1, 0.8, 1),        // Luz cálida
         igvColor(1, 1, 1, 1),
         1, 0, 0,
         igvPunto3D(0, -1, 0),          // Dirección: hacia abajo
-        30,                             // Ángulo de apertura
-        10                              // Exponente
+        12,                             // Ángulo de apertura muy focalizado
+        30                              // Exponente más alto para un cono definido
     );
     luzSpotlight->encender();
+}
+
+void igvEscena3D::activarLuzPuntual(bool encendida) {
+    if (encendida) {
+        luzPuntual->encender();
+    } else {
+        luzPuntual->apagar();
+    }
+}
+
+void igvEscena3D::activarLuzDireccional(bool encendida) {
+    if (encendida) {
+        luzDireccional->encender();
+    } else {
+        luzDireccional->apagar();
+    }
+}
+
+void igvEscena3D::activarLuzSpotlight(bool encendida) {
+    if (encendida) {
+        luzSpotlight->encender();
+    } else {
+        luzSpotlight->apagar();
+    }
 }
 
 // ============ INICIALIZAR MATERIALES ============
@@ -179,13 +208,18 @@ void igvEscena3D::visualizar() {
     glTranslatef(0, -0.5f, 0);
 
     // Aplicar material del suelo
-    materiales[materialActual]->aplicar();
-
-    // Aplicar textura si está activa
     if (texturaActiva && texturas[texturaActual] != nullptr) {
+        // Si hay textura, usamos un material neutro para no teñirla
+        GLfloat blanco[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        GLfloat especular[] = {0.3f, 0.3f, 0.3f, 1.0f};
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blanco);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especular);
+        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 30.0f);
+
         glEnable(GL_TEXTURE_2D);
         texturas[texturaActual]->aplicar();
     } else {
+        materiales[materialActual]->aplicar();
         glDisable(GL_TEXTURE_2D);
     }
 
