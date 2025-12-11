@@ -48,11 +48,7 @@ public:
     void setModoMovimientoLuz(int modo) { modoMovimientoLuz = modo; }
     int getModoMovimientoLuz() const { return modoMovimientoLuz; }
 
-    void cambiarModoSombreado();
-
     void cambiarUsoNormales();
-
-    void setModoSombreadoSuave(bool habilitar);
 
     void setUsoNormales(bool habilitar);
 
@@ -110,7 +106,7 @@ private:
     GLenum filtroMagActual = GL_LINEAR;
     GLenum filtroMinActual = GL_LINEAR;
 
-    int modoMovimientoLuz = 0;     // 0=ninguno, 1=puntual, 2=spotlight, 3=direccional
+    int modoMovimientoLuz = 0;     // 0=ninguno, 1=puntual, 2=spotlight
 
 
     bool mallaCargada = false;

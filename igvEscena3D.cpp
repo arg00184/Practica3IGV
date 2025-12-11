@@ -164,7 +164,9 @@ void igvEscena3D::pintar_quad(float div_x, float div_z) {
     float longX = tam_x / div_x;
     float longZ = tam_z / div_z;
 
-    glNormal3f(0, 1, 0);
+    // Normal constante hacia arriba para que la iluminación (Gouraud/Phong)
+    // afecte correctamente al suelo texturizado
+    glNormal3f(0.0f, 1.0f, 0.0f);
 
     for (int i = 0; i < div_x; i++) {
         for (int j = 0; j < div_z; j++) {
@@ -199,6 +201,10 @@ void igvEscena3D::visualizar() {
         pintar_ejes();
     }
 
+    // Asegurar que la emisión queda desactivada para el resto de objetos
+    GLfloat sin_emision[] = {0.0f, 0.0f, 0.0f, 1.0f};
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, sin_emision);
+
     luzPuntual->aplicar();
     luzDireccional->aplicar();
     luzSpotlight->aplicar();
@@ -209,13 +215,13 @@ void igvEscena3D::visualizar() {
 
     // Aplicar material del suelo
     if (texturaActiva && texturas[texturaActual] != nullptr) {
-        // Si hay textura, usamos un material neutro para no teñirla
-        GLfloat blanco[] = {1.0f, 1.0f, 1.0f, 1.0f};
-        GLfloat especular[] = {0.3f, 0.3f, 0.3f, 1.0f};
-        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blanco);
-        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especular);
-        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 30.0f);
+        // Usamos el material actual para que la iluminación siga afectando a la textura
+        materiales[materialActual]->aplicar();
+        GLfloat sin_emision_textura[] = {0.0f, 0.0f, 0.0f, 1.0f};
+        glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, sin_emision_textura);
 
+        // Aseguramos que la textura se modula con el color/luz del material
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         glEnable(GL_TEXTURE_2D);
         texturas[texturaActual]->aplicar();
     } else {
@@ -314,24 +320,10 @@ void igvEscena3D::set_ejes(bool _ejes) {
     ejes = _ejes;
 }
 
-void igvEscena3D::cambiarModoSombreado() {
-    modelo.cambiarModoSombreado();
-    if (mallaCargada) {
-        malla.cambiarvis();
-    }
-}
-
 void igvEscena3D::cambiarUsoNormales() {
     modelo.cambiarUsoNormales();
     if (mallaCargada) {
         malla.cambiarnormales();
-    }
-}
-
-void igvEscena3D::setModoSombreadoSuave(bool habilitar) {
-    modelo.setModoSombreadoSuave(habilitar);
-    if (mallaCargada) {
-        malla.setGouraud(habilitar);
     }
 }
 

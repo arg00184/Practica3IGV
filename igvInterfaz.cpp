@@ -5,8 +5,6 @@
 enum MenuOpciones {
     IGV_MENU_MODO_TECLADO = 1,
     IGV_MENU_MODO_RATON,
-    IGV_MENU_SOMBREADO_PLANO,
-    IGV_MENU_SOMBREADO_SUAVE,
     IGV_MENU_ANIMAR_BRAZO,
     IGV_MENU_ANIMAR_CAMARA,
     IGV_MENU_DETENER_TODO,
@@ -28,7 +26,6 @@ enum MenuOpciones {
     IGV_MENU_LUZ_SPOT_ON,
     IGV_MENU_LUZ_SPOT_OFF,
     IGV_MENU_MOVER_LUZ_PUNTUAL,
-    IGV_MENU_MOVER_LUZ_DIRECCIONAL,
     IGV_MENU_MOVER_LUZ_SPOT,
     IGV_MENU_MOVER_LUZ_NONE,
     IGV_MENU_SALIR
@@ -67,14 +64,6 @@ void igvInterfaz::menuFunc(int option) {
             _instancia->modoSeleccion = true;
             _instancia->escena.activarModoSeleccion(true);
             printf("Control por raton activado. Pulsa y arrastra con el boton izquierdo para manipular.\n");
-            break;
-        case IGV_MENU_SOMBREADO_PLANO:
-            _instancia->escena.setModoSombreadoSuave(false);
-            printf("Sombreado plano activado.\n");
-            break;
-        case IGV_MENU_SOMBREADO_SUAVE:
-            _instancia->escena.setModoSombreadoSuave(true);
-            printf("Sombreado suave (Gouraud) activado.\n");
             break;
         case IGV_MENU_ANIMAR_BRAZO:
             _instancia->animacionModeloActiva = true;
@@ -164,10 +153,6 @@ void igvInterfaz::menuFunc(int option) {
             _instancia->escena.setModoMovimientoLuz(1);
             printf("Movimiento de luz puntual activo (flechas y Re Pag/Av Pag ajustan X,Y,Z).\n");
             break;
-        case IGV_MENU_MOVER_LUZ_DIRECCIONAL:
-            _instancia->escena.setModoMovimientoLuz(3);
-            printf("Movimiento de luz direccional activo (flechas y Re Pag/Av Pag ajustan el vector).\n");
-            break;
         case IGV_MENU_MOVER_LUZ_SPOT:
             _instancia->escena.setModoMovimientoLuz(2);
             printf("Movimiento de foco activo (flechas y Re Pag/Av Pag ajustan X,Y,Z).\n");
@@ -188,10 +173,6 @@ void igvInterfaz::create_menu() {
     int submenu_control = glutCreateMenu(menuFunc);
     glutAddMenuEntry("Control por Teclado", IGV_MENU_MODO_TECLADO);
     glutAddMenuEntry("Control por Raton", IGV_MENU_MODO_RATON);
-
-    int submenu_sombreado = glutCreateMenu(menuFunc);
-    glutAddMenuEntry("Sombreado Plano", IGV_MENU_SOMBREADO_PLANO);
-    glutAddMenuEntry("Sombreado Suave (Gouraud)", IGV_MENU_SOMBREADO_SUAVE);
 
     int submenu_animacion = glutCreateMenu(menuFunc);
     glutAddMenuEntry("Animar Modelo", IGV_MENU_ANIMAR_BRAZO);
@@ -225,7 +206,6 @@ void igvInterfaz::create_menu() {
 
     int submenu_luces_mover = glutCreateMenu(menuFunc);
     glutAddMenuEntry("Mover luz puntual", IGV_MENU_MOVER_LUZ_PUNTUAL);
-    glutAddMenuEntry("Mover luz direccional", IGV_MENU_MOVER_LUZ_DIRECCIONAL);
     glutAddMenuEntry("Mover foco", IGV_MENU_MOVER_LUZ_SPOT);
     glutAddMenuEntry("Dejar de mover luces", IGV_MENU_MOVER_LUZ_NONE);
 
@@ -235,7 +215,6 @@ void igvInterfaz::create_menu() {
 
     int menu_principal = glutCreateMenu(menuFunc);
     glutAddSubMenu("Modo de control", submenu_control);
-    glutAddSubMenu("Sombreado", submenu_sombreado);
     glutAddSubMenu("Animacion", submenu_animacion);
     glutAddSubMenu("Material suelo", submenu_material_suelo);
     glutAddSubMenu("Textura suelo", submenu_textura_suelo);
@@ -446,7 +425,6 @@ void igvInterfaz::keyboardFunc(unsigned char key, int x, int y) {
             break;
         case 'h':
         case 'H':
-            _instancia->escena.cambiarModoSombreado();
             _instancia->escena.cambiarUsoNormales();
             break;
         case 'r':
@@ -598,8 +576,6 @@ void igvInterfaz::specialFunc(int key, int x, int y) {
         luzSeleccionada = _instancia->escena.getLuzPuntual();
     } else if (modoMovimientoLuz == 2) {
         luzSeleccionada = _instancia->escena.getLuzSpotlight();
-    } else if (modoMovimientoLuz == 3) {
-        luzSeleccionada = _instancia->escena.getLuzDireccional();
     }
 
     if (!modoGlobal && hayParteSeleccionada && camaraActiva) {
