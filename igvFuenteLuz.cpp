@@ -17,10 +17,11 @@
 igvFuenteLuz::igvFuenteLuz ( const unsigned int _idLuz
                              , const igvPunto3D &_posicion, const igvColor &cAmb
                              , const igvColor &cDif, const igvColor &cEsp
-                             , const double a0, const double a1, const double a2 ):
+                             , const double a0, const double a1, const double a2, bool _esDireccional ):
                            idLuz ( _idLuz ), posicion( _posicion )
                            , colorAmbiente( cAmb ), colorDifuso( cDif )
-                           , colorEspecular( cEsp ), aten_a0( a0 ), aten_a1( a1 )
+                           , colorEspecular( cEsp ), esDireccional(_esDireccional)
+                           , aten_a0( a0 ), aten_a1( a1 )
                            , aten_a2( a2 ), direccion_foco( { 0, 0, 0 } )
                            , angulo_foco( 180 ), exponente_foco( 0 )
                            , encendida( true )
@@ -48,7 +49,7 @@ igvFuenteLuz::igvFuenteLuz ( const unsigned int _idLuz
                              , const igvPunto3D &dir_foco, const double ang_foco
                              , const double exp_foco ): idLuz( _idLuz )
                            , posicion( _posicion ), colorAmbiente( cAmb )
-                           , colorDifuso( cDif ), colorEspecular( cEsp )
+                           , colorDifuso( cDif ), colorEspecular( cEsp ), esDireccional(false)
                            , aten_a0( a0 ), aten_a1( a1 ), aten_a2( a2 )
                            , direccion_foco( dir_foco ), angulo_foco( ang_foco )
                            , exponente_foco( exp_foco ), encendida( true )
@@ -207,7 +208,12 @@ void igvFuenteLuz::aplicar ()
         glEnable(idLuz);
 
         //	establecer la posición de la luz
-        glLightfv(idLuz, GL_POSITION, posicion.cloneToFloatArray());
+        float *posicion4 = posicion.cloneToFloatArray();
+        if (esDireccional) {
+            posicion4[3] = 0.0f; // w = 0 para luz direccional
+        }
+        glLightfv(idLuz, GL_POSITION, posicion4);
+        delete[] posicion4;
 
         //	establecer los colores ambiental, difuso y especular
         glLightfv(idLuz, GL_AMBIENT, colorAmbiente.cloneToFloatArray());
