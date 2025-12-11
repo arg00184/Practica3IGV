@@ -449,12 +449,12 @@ void igvInterfaz::keyboardFunc(unsigned char key, int x, int y) {
             }
             break;
 
-        case 'd': // Apartado E: aumentar en 0.1 la componente R del coeficiente difuso del material
-            _instancia->escena.getMaterial()->incrementarRDifuso(0.1);
-            break;
-        case 'D': // Apartado E: disminuir en 0.1 la componente R del coeficiente difuso del material
-            _instancia->escena.getMaterial()->incrementarRDifuso(-0.1);
-            break;
+        // case 'd': // Apartado E: aumentar en 0.1 la componente R del coeficiente difuso del material
+        //     _instancia->escena.getMaterial()->incrementarRDifuso(0.1);
+        //     break;
+        // case 'D': // Apartado E: disminuir en 0.1 la componente R del coeficiente difuso del material
+        //     _instancia->escena.getMaterial()->incrementarRDifuso(-0.1);
+        //     break;
         // case 's': // Apartado E: aumentar en 0.1 la componente R del coeficiente especular del material
         //     _instancia->escena.getMaterial()->incrementarREspecular(0.1);
         //     break;
