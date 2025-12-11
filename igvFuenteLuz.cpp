@@ -1,4 +1,5 @@
 #include "igvFuenteLuz.h"
+#include <cmath>
 
 // M�todos constructores
 
@@ -207,8 +208,28 @@ void igvFuenteLuz::aplicar ()
         //      activar la luz
         glEnable(idLuz);
 
-        //      establecer la posicin de la luz
-        float posicion4[4] = {static_cast<float>(posicion[0]), static_cast<float>(posicion[1]), static_cast<float>(posicion[2]), esDireccional ? 0.0f : 1.0f};
+        //      establecer la posición o dirección de la luz
+        float posicion4[4];
+        if (esDireccional) {
+            float dx = static_cast<float>(posicion[0]);
+            float dy = static_cast<float>(posicion[1]);
+            float dz = static_cast<float>(posicion[2]);
+            float modulo = std::sqrt(dx * dx + dy * dy + dz * dz);
+            if (modulo > 0.0001f) {
+                dx /= modulo;
+                dy /= modulo;
+                dz /= modulo;
+            }
+            posicion4[0] = dx;
+            posicion4[1] = dy;
+            posicion4[2] = dz;
+            posicion4[3] = 0.0f;
+        } else {
+            posicion4[0] = static_cast<float>(posicion[0]);
+            posicion4[1] = static_cast<float>(posicion[1]);
+            posicion4[2] = static_cast<float>(posicion[2]);
+            posicion4[3] = 1.0f;
+        }
         glLightfv(idLuz, GL_POSITION, posicion4);
 
         //      establecer los colores ambiental, difuso y especular
@@ -224,8 +245,14 @@ void igvFuenteLuz::aplicar ()
         glLightf(idLuz, GL_LINEAR_ATTENUATION, aten_a1);
         glLightf(idLuz, GL_QUADRATIC_ATTENUATION, aten_a2);
 
-        //      establecer la atenuacin angular y la direccin del foco
+        //      establecer la atenuacin angular y la dirección del foco
         float direccion[3] = {static_cast<float>(direccion_foco[0]), static_cast<float>(direccion_foco[1]), static_cast<float>(direccion_foco[2])};
+        float modulo_dir = std::sqrt(direccion[0] * direccion[0] + direccion[1] * direccion[1] + direccion[2] * direccion[2]);
+        if (modulo_dir > 0.0001f) {
+            direccion[0] /= modulo_dir;
+            direccion[1] /= modulo_dir;
+            direccion[2] /= modulo_dir;
+        }
         glLightfv(idLuz, GL_SPOT_DIRECTION, direccion);
         glLightf(idLuz, GL_SPOT_CUTOFF, angulo_foco);
         glLightf(idLuz, GL_SPOT_EXPONENT, exponente_foco);
