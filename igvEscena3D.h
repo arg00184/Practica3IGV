@@ -35,6 +35,7 @@ public:
 
     void cambiarMaterial(int indice);
     igvMaterial* getMaterialActual() { return materiales[materialActual]; }
+    igvMaterial* getMaterial() { return materiales[materialActual]; }
 
     void cambiarTextura(int indice);  // -1 para desactivar
     void setFiltroMag(GLenum filtro);
