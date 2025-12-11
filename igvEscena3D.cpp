@@ -213,15 +213,13 @@ void igvEscena3D::visualizar() {
 
     // Aplicar material del suelo
     if (texturaActiva && texturas[texturaActual] != nullptr) {
-        // Si hay textura, usamos un material neutro para no teñirla
-        GLfloat blanco[] = {1.0f, 1.0f, 1.0f, 1.0f};
-        GLfloat especular[] = {0.3f, 0.3f, 0.3f, 1.0f};
+        // Usamos el material actual para que la iluminación siga afectando a la textura
+        materiales[materialActual]->aplicar();
         GLfloat sin_emision_textura[] = {0.0f, 0.0f, 0.0f, 1.0f};
-        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blanco);
-        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especular);
         glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, sin_emision_textura);
-        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 30.0f);
 
+        // Aseguramos que la textura se modula con el color/luz del material
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         glEnable(GL_TEXTURE_2D);
         texturas[texturaActual]->aplicar();
     } else {
