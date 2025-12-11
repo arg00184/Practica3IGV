@@ -1,4 +1,5 @@
 #include "igvFuenteLuz.h"
+#include <cmath>
 
 // M�todos constructores
 
@@ -17,10 +18,11 @@
 igvFuenteLuz::igvFuenteLuz ( const unsigned int _idLuz
                              , const igvPunto3D &_posicion, const igvColor &cAmb
                              , const igvColor &cDif, const igvColor &cEsp
-                             , const double a0, const double a1, const double a2 ):
+                             , const double a0, const double a1, const double a2, bool _esDireccional ):
                            idLuz ( _idLuz ), posicion( _posicion )
                            , colorAmbiente( cAmb ), colorDifuso( cDif )
-                           , colorEspecular( cEsp ), aten_a0( a0 ), aten_a1( a1 )
+                           , colorEspecular( cEsp ), esDireccional(_esDireccional)
+                           , aten_a0( a0 ), aten_a1( a1 )
                            , aten_a2( a2 ), direccion_foco( { 0, 0, 0 } )
                            , angulo_foco( 180 ), exponente_foco( 0 )
                            , encendida( true )
@@ -48,7 +50,7 @@ igvFuenteLuz::igvFuenteLuz ( const unsigned int _idLuz
                              , const igvPunto3D &dir_foco, const double ang_foco
                              , const double exp_foco ): idLuz( _idLuz )
                            , posicion( _posicion ), colorAmbiente( cAmb )
-                           , colorDifuso( cDif ), colorEspecular( cEsp )
+                           , colorDifuso( cDif ), colorEspecular( cEsp ), esDireccional(false)
                            , aten_a0( a0 ), aten_a1( a1 ), aten_a2( a2 )
                            , direccion_foco( dir_foco ), angulo_foco( ang_foco )
                            , exponente_foco( exp_foco ), encendida( true )
@@ -200,38 +202,70 @@ bool igvFuenteLuz::esta_encendida ()
 void igvFuenteLuz::aplicar ()
 {
 // APARTADO A
-    // si la luz está encendida
+    // si la luz est encendida
     if (encendida)
     {
-        //	activar la luz
+        //      activar la luz
         glEnable(idLuz);
 
-        //	establecer la posición de la luz
-        glLightfv(idLuz, GL_POSITION, posicion.cloneToFloatArray());
+        //      establecer la posición o dirección de la luz
+        float posicion4[4];
+        if (esDireccional) {
+            float dx = static_cast<float>(posicion[0]);
+            float dy = static_cast<float>(posicion[1]);
+            float dz = static_cast<float>(posicion[2]);
+            float modulo = std::sqrt(dx * dx + dy * dy + dz * dz);
+            if (modulo > 0.0001f) {
+                dx /= modulo;
+                dy /= modulo;
+                dz /= modulo;
+            }
+            posicion4[0] = dx;
+            posicion4[1] = dy;
+            posicion4[2] = dz;
+            posicion4[3] = 0.0f;
+        } else {
+            posicion4[0] = static_cast<float>(posicion[0]);
+            posicion4[1] = static_cast<float>(posicion[1]);
+            posicion4[2] = static_cast<float>(posicion[2]);
+            posicion4[3] = 1.0f;
+        }
+        glLightfv(idLuz, GL_POSITION, posicion4);
 
-        //	establecer los colores ambiental, difuso y especular
-        glLightfv(idLuz, GL_AMBIENT, colorAmbiente.cloneToFloatArray());
-        glLightfv(idLuz, GL_DIFFUSE, colorDifuso.cloneToFloatArray());
-        glLightfv(idLuz, GL_SPECULAR, colorEspecular.cloneToFloatArray());
+        //      establecer los colores ambiental, difuso y especular
+        float ambiente[4] = {static_cast<float>(colorAmbiente[0]), static_cast<float>(colorAmbiente[1]), static_cast<float>(colorAmbiente[2]), static_cast<float>(colorAmbiente[3])};
+        float difuso[4] = {static_cast<float>(colorDifuso[0]), static_cast<float>(colorDifuso[1]), static_cast<float>(colorDifuso[2]), static_cast<float>(colorDifuso[3])};
+        float especular[4] = {static_cast<float>(colorEspecular[0]), static_cast<float>(colorEspecular[1]), static_cast<float>(colorEspecular[2]), static_cast<float>(colorEspecular[3])};
+        glLightfv(idLuz, GL_AMBIENT, ambiente);
+        glLightfv(idLuz, GL_DIFFUSE, difuso);
+        glLightfv(idLuz, GL_SPECULAR, especular);
 
-        //	establecer la atenuación radial
+        //      establecer la atenuacin radial
         glLightf(idLuz, GL_CONSTANT_ATTENUATION, aten_a0);
         glLightf(idLuz, GL_LINEAR_ATTENUATION, aten_a1);
         glLightf(idLuz, GL_QUADRATIC_ATTENUATION, aten_a2);
 
-        //	establecer la atenuación angular y la dirección del foco
-        glLightfv(idLuz, GL_SPOT_DIRECTION, direccion_foco.cloneToFloatArray());
+        //      establecer la atenuacin angular y la dirección del foco
+        float direccion[3] = {static_cast<float>(direccion_foco[0]), static_cast<float>(direccion_foco[1]), static_cast<float>(direccion_foco[2])};
+        float modulo_dir = std::sqrt(direccion[0] * direccion[0] + direccion[1] * direccion[1] + direccion[2] * direccion[2]);
+        if (modulo_dir > 0.0001f) {
+            direccion[0] /= modulo_dir;
+            direccion[1] /= modulo_dir;
+            direccion[2] /= modulo_dir;
+        }
+        glLightfv(idLuz, GL_SPOT_DIRECTION, direccion);
         glLightf(idLuz, GL_SPOT_CUTOFF, angulo_foco);
         glLightf(idLuz, GL_SPOT_EXPONENT, exponente_foco);
     }
 
-        // si la luz está apagada
-        //	desactivar la luz
+        // si la luz est apagada
+        //      desactivar la luz
     else
     {
         glDisable(idLuz);
     }
 }
+
 
 void igvFuenteLuz::mover(float dx, float dy, float dz)
 {

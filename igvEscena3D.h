@@ -32,6 +32,10 @@ public:
     igvFuenteLuz* getLuzDireccional() { return luzDireccional; }
     igvFuenteLuz* getLuzSpotlight() { return luzSpotlight; }
 
+    void activarLuzPuntual(bool encendida);
+    void activarLuzDireccional(bool encendida);
+    void activarLuzSpotlight(bool encendida);
+
 
     void cambiarMaterial(int indice);
     igvMaterial* getMaterialActual() { return materiales[materialActual]; }
@@ -106,7 +110,7 @@ private:
     GLenum filtroMagActual = GL_LINEAR;
     GLenum filtroMinActual = GL_LINEAR;
 
-    int modoMovimientoLuz = 0;     // 0=ninguno, 1=puntual, 2=spotlight
+    int modoMovimientoLuz = 0;     // 0=ninguno, 1=puntual, 2=spotlight, 3=direccional
 
 
     bool mallaCargada = false;

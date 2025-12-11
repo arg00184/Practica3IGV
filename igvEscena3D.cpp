@@ -46,23 +46,48 @@ void igvEscena3D::inicializarLuces() {
         igvColor(0.2, 0.2, 0.2, 1),
         igvColor(0.8, 0.8, 0.7, 1),
         igvColor(0.5, 0.5, 0.5, 1),
-        1, 0, 0
+        1, 0, 0,
+        true
     );
     luzDireccional->encender();
 
     // Spotlight (GL_LIGHT2)
     luzSpotlight = new igvFuenteLuz(
         GL_LIGHT2,
-        igvPunto3D(3, 2, 3),           // Posición
+        igvPunto3D(0, 2.25, 0),        // Posición centrada sobre el suelo
         igvColor(0, 0, 0, 1),
         igvColor(1, 1, 0.8, 1),        // Luz cálida
         igvColor(1, 1, 1, 1),
         1, 0, 0,
         igvPunto3D(0, -1, 0),          // Dirección: hacia abajo
-        30,                             // Ángulo de apertura
-        10                              // Exponente
+        12,                             // Ángulo de apertura muy focalizado
+        30                              // Exponente más alto para un cono definido
     );
     luzSpotlight->encender();
+}
+
+void igvEscena3D::activarLuzPuntual(bool encendida) {
+    if (encendida) {
+        luzPuntual->encender();
+    } else {
+        luzPuntual->apagar();
+    }
+}
+
+void igvEscena3D::activarLuzDireccional(bool encendida) {
+    if (encendida) {
+        luzDireccional->encender();
+    } else {
+        luzDireccional->apagar();
+    }
+}
+
+void igvEscena3D::activarLuzSpotlight(bool encendida) {
+    if (encendida) {
+        luzSpotlight->encender();
+    } else {
+        luzSpotlight->apagar();
+    }
 }
 
 // ============ INICIALIZAR MATERIALES ============
