@@ -103,6 +103,9 @@ private:
     int texturaActual = -1;        // -1 = sin textura
     bool texturaActiva = false;
 
+    GLenum filtroMagActual = GL_LINEAR;
+    GLenum filtroMinActual = GL_LINEAR;
+
     int modoMovimientoLuz = 0;     // 0=ninguno, 1=puntual, 2=spotlight
 
 

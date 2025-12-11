@@ -242,6 +242,8 @@ void igvEscena3D::cambiarTextura(int indice) {
                         texturas[2] = igvTextura::crearTableroAjedrez(256, 8);
                         break;
                 }
+                texturas[indice]->setFiltroMag(filtroMagActual);
+                texturas[indice]->setFiltroMin(filtroMinActual);
             } catch (const std::exception& e) {
                 std::cerr << "No se pudo cargar la textura: " << e.what() << "\n";
                 return;
@@ -254,6 +256,7 @@ void igvEscena3D::cambiarTextura(int indice) {
 
 
 void igvEscena3D::setFiltroMag(GLenum filtro) {
+    filtroMagActual = filtro;
     for (int i = 0; i < 3; i++) {
         if (texturas[i] != nullptr) {
             texturas[i]->setFiltroMag(filtro);
@@ -262,6 +265,7 @@ void igvEscena3D::setFiltroMag(GLenum filtro) {
 }
 
 void igvEscena3D::setFiltroMin(GLenum filtro) {
+    filtroMinActual = filtro;
     for (int i = 0; i < 3; i++) {
         if (texturas[i] != nullptr) {
             texturas[i]->setFiltroMin(filtro);
