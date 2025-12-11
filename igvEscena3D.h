@@ -16,6 +16,9 @@
 #include "igvTextura.h"
 
 
+// Clase principal de la escena. Gestiona las fuentes de luz disponibles
+// (puntual, direccional y spotlight), los materiales y texturas del suelo
+// y las transformaciones globales que se aplican sobre los modelos.
 class igvEscena3D {
 public:
     igvEscena3D();
@@ -32,15 +35,18 @@ public:
     igvFuenteLuz* getLuzDireccional() { return luzDireccional; }
     igvFuenteLuz* getLuzSpotlight() { return luzSpotlight; }
 
+    // Encendido y apagado de las tres fuentes de luz parametrizables.
     void activarLuzPuntual(bool encendida);
     void activarLuzDireccional(bool encendida);
     void activarLuzSpotlight(bool encendida);
 
 
+    // Permite alternar entre los materiales disponibles para el suelo.
     void cambiarMaterial(int indice);
     igvMaterial* getMaterialActual() { return materiales[materialActual]; }
     igvMaterial* getMaterial() { return materiales[materialActual]; }
 
+    // Activa o desactiva la textura del suelo y aplica los filtros seleccionados.
     void cambiarTextura(int indice);  // -1 para desactivar
     void setFiltroMag(GLenum filtro);
     void setFiltroMin(GLenum filtro);
