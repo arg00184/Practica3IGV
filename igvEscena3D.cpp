@@ -320,24 +320,10 @@ void igvEscena3D::set_ejes(bool _ejes) {
     ejes = _ejes;
 }
 
-void igvEscena3D::cambiarModoSombreado() {
-    modelo.cambiarModoSombreado();
-    if (mallaCargada) {
-        malla.cambiarvis();
-    }
-}
-
 void igvEscena3D::cambiarUsoNormales() {
     modelo.cambiarUsoNormales();
     if (mallaCargada) {
         malla.cambiarnormales();
-    }
-}
-
-void igvEscena3D::setModoSombreadoSuave(bool habilitar) {
-    modelo.setModoSombreadoSuave(habilitar);
-    if (mallaCargada) {
-        malla.setGouraud(habilitar);
     }
 }
 

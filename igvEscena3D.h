@@ -48,11 +48,7 @@ public:
     void setModoMovimientoLuz(int modo) { modoMovimientoLuz = modo; }
     int getModoMovimientoLuz() const { return modoMovimientoLuz; }
 
-    void cambiarModoSombreado();
-
     void cambiarUsoNormales();
-
-    void setModoSombreadoSuave(bool habilitar);
 
     void setUsoNormales(bool habilitar);
 

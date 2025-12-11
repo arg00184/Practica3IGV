@@ -17,7 +17,6 @@ igvModeloArticulado::igvModeloArticulado() {
     anguloBrazo2Yaw = 0.0f;
     anguloPantalla = -45.0f;
     anguloPantallaYaw = 0.0f;
-    sombreado_suave = true;
     usar_normales = true;
 
     cilindroUnidad = nullptr;
@@ -222,11 +221,7 @@ void igvModeloArticulado::dibujarPantalla() {
  * Visualiza el modelo articulado completo usando el grafo de escena
  */
 void igvModeloArticulado::visualizar() {
-    if (sombreado_suave) {
-        glShadeModel(GL_SMOOTH);
-    } else {
-        glShadeModel(GL_FLAT);
-    }
+    glShadeModel(GL_SMOOTH);
 
     if (usar_normales) {
         glEnable(GL_NORMALIZE);
@@ -437,21 +432,10 @@ void igvModeloArticulado::resetearPose() {
 }
 
 /**
- * Cambia entre sombreado plano y suave
- */
-void igvModeloArticulado::cambiarModoSombreado() {
-    sombreado_suave = !sombreado_suave;
-}
-
-/**
  * Activa/desactiva el uso de normales
  */
 void igvModeloArticulado::cambiarUsoNormales() {
     usar_normales = !usar_normales;
-}
-
-void igvModeloArticulado::setModoSombreadoSuave(bool habilitar) {
-    sombreado_suave = habilitar;
 }
 
 void igvModeloArticulado::setUsoNormales(bool habilitar) {

@@ -5,8 +5,6 @@
 enum MenuOpciones {
     IGV_MENU_MODO_TECLADO = 1,
     IGV_MENU_MODO_RATON,
-    IGV_MENU_SOMBREADO_PLANO,
-    IGV_MENU_SOMBREADO_SUAVE,
     IGV_MENU_ANIMAR_BRAZO,
     IGV_MENU_ANIMAR_CAMARA,
     IGV_MENU_DETENER_TODO,
@@ -66,14 +64,6 @@ void igvInterfaz::menuFunc(int option) {
             _instancia->modoSeleccion = true;
             _instancia->escena.activarModoSeleccion(true);
             printf("Control por raton activado. Pulsa y arrastra con el boton izquierdo para manipular.\n");
-            break;
-        case IGV_MENU_SOMBREADO_PLANO:
-            _instancia->escena.setModoSombreadoSuave(false);
-            printf("Sombreado plano activado.\n");
-            break;
-        case IGV_MENU_SOMBREADO_SUAVE:
-            _instancia->escena.setModoSombreadoSuave(true);
-            printf("Sombreado suave (Gouraud) activado.\n");
             break;
         case IGV_MENU_ANIMAR_BRAZO:
             _instancia->animacionModeloActiva = true;
@@ -184,10 +174,6 @@ void igvInterfaz::create_menu() {
     glutAddMenuEntry("Control por Teclado", IGV_MENU_MODO_TECLADO);
     glutAddMenuEntry("Control por Raton", IGV_MENU_MODO_RATON);
 
-    int submenu_sombreado = glutCreateMenu(menuFunc);
-    glutAddMenuEntry("Sombreado Plano", IGV_MENU_SOMBREADO_PLANO);
-    glutAddMenuEntry("Sombreado Suave (Gouraud)", IGV_MENU_SOMBREADO_SUAVE);
-
     int submenu_animacion = glutCreateMenu(menuFunc);
     glutAddMenuEntry("Animar Modelo", IGV_MENU_ANIMAR_BRAZO);
     glutAddMenuEntry("Animar Camara", IGV_MENU_ANIMAR_CAMARA);
@@ -229,7 +215,6 @@ void igvInterfaz::create_menu() {
 
     int menu_principal = glutCreateMenu(menuFunc);
     glutAddSubMenu("Modo de control", submenu_control);
-    glutAddSubMenu("Sombreado", submenu_sombreado);
     glutAddSubMenu("Animacion", submenu_animacion);
     glutAddSubMenu("Material suelo", submenu_material_suelo);
     glutAddSubMenu("Textura suelo", submenu_textura_suelo);
@@ -440,7 +425,6 @@ void igvInterfaz::keyboardFunc(unsigned char key, int x, int y) {
             break;
         case 'h':
         case 'H':
-            _instancia->escena.cambiarModoSombreado();
             _instancia->escena.cambiarUsoNormales();
             break;
         case 'r':
